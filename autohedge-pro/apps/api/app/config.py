@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     cors_origins: list[str] = ["http://localhost:3002"]
     stripe_secret_key: str | None = None
+    stripe_webhook_secret: str | None = None
+    stripe_price_pro: str | None = None
+    stripe_price_aum: str | None = None
     alpaca_api_key: str = ""
     alpaca_secret_key: str | None = None
     auth_bypass: bool = True

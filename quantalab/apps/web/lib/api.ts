@@ -6,5 +6,11 @@ async function req<T>(p: string, o: RequestInit = {}): Promise<T> {
   return r.json();
 }
 export const api = { get: <T,>(p: string) => req<T>(p), post: <T,>(p: string, b?: any) => req<T>(p, { method: "POST", body: b ? JSON.stringify(b) : undefined }) };
+
+export interface CheckoutResult { url: string; id: string; dev_mode?: boolean; }
+export const billing = {
+  checkout: (plan: string) => api.post<CheckoutResult>("/billing/checkout", { plan }),
+  portal: () => api.post<{ url: string }>("/billing/portal"),
+};
 export interface MarketplaceStrategy { id: string; name: string; author: string; description: string; price_cents: number; downloads: number; rating: number; tags: string[]; }
 export interface BacktestResult { final_value: number; total_return: number; sharpe: number; sortino: number; max_drawdown: number; num_trades: number; equity_curve: any[]; code?: string; error?: string; }

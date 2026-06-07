@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { UpgradeButton } from "@/components/billing/upgrade-button";
 
 const PLANS = [
   {
     name: "Pay-as-you-save",
+    planId: "performance",
     price: "20%",
     period: "of verified savings",
     description: "We only get paid when we actually save you money.",
@@ -24,6 +26,7 @@ const PLANS = [
   },
   {
     name: "Enterprise",
+    planId: null,
     price: "Custom",
     period: "talk to sales",
     description: "For companies with 10+ engineers and 5+ accounts.",
@@ -71,9 +74,15 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <Button asChild size="lg" className="w-full" variant={p.highlighted ? "default" : "outline"}>
-                  <Link href={p.href}>{p.cta}</Link>
-                </Button>
+                {p.planId ? (
+                  <UpgradeButton plan={p.planId} variant={p.highlighted ? "default" : "outline"} size="lg">
+                    {p.cta}
+                  </UpgradeButton>
+                ) : (
+                  <Button asChild size="lg" className="w-full" variant={p.highlighted ? "default" : "outline"}>
+                    <Link href={p.href}>{p.cta}</Link>
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { UpgradeButton } from "@/components/billing/upgrade-button";
 
 const PLANS = [
   {
     name: "Free",
+    planId: null,
     price: "$0",
     period: "/mo",
     description: "For learning and exploring. Up to 3 notebooks.",
@@ -23,6 +25,7 @@ const PLANS = [
   },
   {
     name: "Researcher",
+    planId: "researcher",
     price: "$199",
     period: "/mo",
     description: "For solo quants. Unlimited notebooks, 1k backtests/month.",
@@ -40,6 +43,7 @@ const PLANS = [
   },
   {
     name: "Quant Shop",
+    planId: "quant",
     price: "$999",
     period: "/mo",
     description: "For 2-10 person quant teams. Shared notebooks, multi-user.",
@@ -87,9 +91,15 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <Button asChild size="lg" className="w-full" variant={p.highlighted ? "default" : "outline"}>
-                  <Link href={p.href}>{p.cta}</Link>
-                </Button>
+                {p.planId ? (
+                  <UpgradeButton plan={p.planId} variant={p.highlighted ? "default" : "outline"} size="lg">
+                    {p.cta}
+                  </UpgradeButton>
+                ) : (
+                  <Button asChild size="lg" className="w-full" variant={p.highlighted ? "default" : "outline"}>
+                    <Link href={p.href}>{p.cta}</Link>
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}

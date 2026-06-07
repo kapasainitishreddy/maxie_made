@@ -1,0 +1,69 @@
+name: Post-Deploy Care
+
+# - Every 6h: health-check all 5 Netlify sites
+# - Weekly Sunday 3am UTC: run pnpm audit across all apps
+#
+# Neon Postgres does automatic backups (7d retention on free tier) — no script needed.
+# To add Slack/Discord alerts: create a webhook and uncomment the curl in the health-check job.
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    name: Uptime check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all 5 sites
+        env:
+          SITES: "https://pharmaip-radar.netlify.app,https://cloudfinops-copilot.netlify.app,https://autohedge-pro.netlify.app,https://quantalab.netlify.app,https://pegwatch.netlify.app"
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          FAILED=()
+          for url in $(echo $SITES | tr ',' ' '); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -m 15 -L "$url/" || echo "000")
+            if [[ "$code" == "200" ]]; then
+              echo "✅ $url -> $code"
+            else
+              echo "❌ $url -> $code"
+              FAILED+=("$url")
+            fi
+          done
+          if [ ${#FAILED[@]} -gt 0 ]; then
+            msg="🚨 maxie_made: ${#FAILED[@]} site(s) down: ${FAILED[*]}"
+            echo "::error::$msg"
+            if [ -n "$DISCORD_WEBHOOK" ]; then
+              curl -s -X POST "$DISCORD_WEBHOOK" \
+                -H "Content-Type: application/json" \
+                -d "{\"content\": \"$msg\"}" || true
+            fi
+            exit 1
+          fi
+          echo "✅ All 5 sites healthy"
+
+  dep-audit:
+    name: Weekly dep audit
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 3 * * 0' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run pnpm audit across all apps
+        run: |
+          apps=(pharmaip-radar cloudfinops-copilot autohedge-pro quantalab pegwatch)
+          ISSUES=0
+          for app in "${apps[@]}"; do
+            echo "── $app ──"
+            cd "$app/apps/web" || continue
+            pnpm audit --prod --audit-level=high 2>&1 | tail -5 \
+              && echo "✅ $app clean" \
+              || { echo "::warning::$app has high-severity issues"; ISSUES=$((ISSUES+1)); }
+            cd ../../..
+          done
+          if [ $ISSUES -gt 0 ]; then
+            echo "::warning::$ISSUES app(s) have dependency issues"
+          else
+            echo "✅ No high-severity dependency issues"
+          fi

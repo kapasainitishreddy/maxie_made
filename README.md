@@ -1,6 +1,6 @@
-# 🚀 maxie_made — 4 Production-Ready SaaS Apps
+# 🚀 maxie_made — 5 Production-Ready SaaS Apps
 
-Four full-stack SaaS products, all **$0 to launch**, all **FastAPI + Next.js 15 + SQLite/Postgres**.
+Five full-stack SaaS products, all **$0 to launch**, all **FastAPI + Next.js 15 + SQLite/Postgres**.
 
 [![CI](https://github.com/kapasainitishreddy/maxie_made/actions/workflows/ci.yml/badge.svg)](https://github.com/kapasainitishreddy/maxie_made/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -20,10 +20,11 @@ Four full-stack SaaS products, all **$0 to launch**, all **FastAPI + Next.js 15 
 
 | App | Niche | Tests | Revenue model |
 |---|---|---|---|
-| **[pharmaip-radar](./pharmaip-radar)** | Pharma patent/IP intelligence | 60 ✅ | $999-4999/mo |
-| **[cloudfinops-copilot](./cloudfinops-copilot)** | AWS/GCP cost auto-fixer | 30 ✅ | 20% of savings |
-| **[autohedge-pro](./autohedge-pro)** | Personal hedge fund | 33 ✅ | $99/mo + 0.5% AUM |
-| **[quantalab](./quantalab)** | Quant research IDE | 17 ✅ | $199-999/mo |
+| **[pharmaip-radar](./pharmaip-radar)** | Pharma patent/IP intelligence | 63 ✅ | $999-4999/mo |
+| **[cloudfinops-copilot](./cloudfinops-copilot)** | AWS/GCP cost auto-fixer | 33 ✅ | 20% of savings |
+| **[autohedge-pro](./autohedge-pro)** | Personal hedge fund | 36 ✅ | $99/mo + 0.5% AUM |
+| **[quantalab](./quantalab)** | Quant research IDE | 20 ✅ | $199-999/mo |
+| **[pegwatch](./pegwatch)** | Stablecoin depeg early-warning | 57 ✅ | $19-99/mo |
 
 **Stack:**
 - Backend: FastAPI 0.115 + SQLAlchemy 2.0 async + Pydantic v2 + uv
@@ -117,7 +118,7 @@ Free alternatives if you really want $0:
 
 ## What's included
 
-- ✅ **140 backend tests** passing
+- ✅ **209 backend tests** passing (was 140, +69 from billing tests + 5th app)
 - ✅ **Custom SVG logos** for all 4 apps
 - ✅ **3D animated heroes** with floating cards
 - ✅ **"How it works"** + **"Real case study"** sections
@@ -129,8 +130,12 @@ Free alternatives if you really want $0:
 - ✅ **Plausible** privacy-friendly analytics (no-op when domain not set)
 - ✅ **CI/CD** via GitHub Actions (pytest + pip-audit + bandit + pnpm audit)
 - ✅ **Weekly security scans** scheduled in CI
-- ✅ **netlify.toml** for all 4 apps (one-click deploy)
-- ✅ **fly.toml** for all 4 apps (one-command deploy)
+- ✅ **Custom SVG logos** for all 5 apps
+- ✅ **netlify.toml** for all 5 apps (one-click deploy)
+- ✅ **fly.toml** for all 5 apps (one-command deploy)
+- ✅ **Auto-deploy to Netlify** on push to main (5 sites)
+- ✅ **Post-deploy health checks** every 6h + weekly dep audit
+- ✅ **Stripe billing** integrated in all 5 apps (checkout + portal + webhook)
 - ✅ **Helper scripts** for bash and Windows
 - ✅ **Auto-setup scripts** for Clerk + Neon
 

@@ -1,12 +1,12 @@
 import { Check, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { UpgradeButton } from "@/components/billing/upgrade-button";
 
 const tiers = [
   {
     name: "Starter",
+    planId: "starter",
     price: 999,
     description: "For solo IP attorneys getting started",
     features: [
@@ -19,6 +19,7 @@ const tiers = [
   },
   {
     name: "Pro",
+    planId: "pro",
     price: 2499,
     description: "For boutique IP teams",
     features: [
@@ -34,6 +35,7 @@ const tiers = [
   },
   {
     name: "Enterprise",
+    planId: "enterprise",
     price: 4999,
     description: "For pharma IP departments",
     features: [
@@ -96,13 +98,12 @@ export function Pricing() {
                 ))}
               </ul>
 
-              <Button
-                asChild
-                className="w-full"
+              <UpgradeButton
+                plan={tier.planId}
                 variant={tier.popular ? "default" : "outline"}
               >
-                <Link href="/sign-up">Start free trial</Link>
-              </Button>
+                Start free trial
+              </UpgradeButton>
             </Card>
           ))}
         </div>

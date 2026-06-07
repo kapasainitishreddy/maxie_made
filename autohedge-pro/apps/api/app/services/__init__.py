@@ -8,9 +8,11 @@ from app.services.metrics import (
 from app.services.backtester import Backtester
 from app.services.data import DataFetcher
 from app.services.paper_trader import PaperTrader
+from app.services.stripe import StripeClient
 
 __all__ = [
     "Strategy", "Signal", "get_strategy", "list_strategies", "STRATEGY_REGISTRY",
     "sharpe", "sortino", "max_drawdown", "total_return", "calmar",
     "Backtester", "DataFetcher", "PaperTrader",
+    "StripeClient",
 ]

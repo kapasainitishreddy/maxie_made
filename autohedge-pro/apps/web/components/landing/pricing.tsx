@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { UpgradeButton } from "@/components/billing/upgrade-button";
 
 const PLANS = [
   {
     name: "Hobby",
+    planId: null,
     price: "$0",
     period: "/mo",
     description: "Paper trading, backtest, one strategy at a time.",
@@ -23,6 +25,7 @@ const PLANS = [
   },
   {
     name: "Pro",
+    planId: "pro",
     price: "$99",
     period: "/mo + 0.5% AUM",
     description: "12 strategies, paper + live via Alpaca/IBKR, regime detection.",
@@ -40,6 +43,7 @@ const PLANS = [
   },
   {
     name: "Family Office",
+    planId: "aum",
     price: "$499",
     period: "/mo + 0.3% AUM",
     description: "For $1M+ AUM. Custom strategies, dedicated strategist.",
@@ -87,9 +91,15 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
-                <Button asChild size="lg" className="w-full" variant={p.highlighted ? "default" : "outline"}>
-                  <Link href={p.href}>{p.cta}</Link>
-                </Button>
+                {p.planId ? (
+                  <UpgradeButton plan={p.planId} variant={p.highlighted ? "default" : "outline"} size="lg">
+                    {p.cta}
+                  </UpgradeButton>
+                ) : (
+                  <Button asChild size="lg" className="w-full" variant={p.highlighted ? "default" : "outline"}>
+                    <Link href={p.href}>{p.cta}</Link>
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}

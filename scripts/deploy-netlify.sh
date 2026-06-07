@@ -24,6 +24,7 @@ APPS=(
   "cloudfinops-copilot:cloudfinops-copilot:https://cloudfinops-copilot.fly.dev"
   "autohedge-pro:autohedge-pro:https://autohedge-pro.fly.dev"
   "quantalab:quantalab:https://quantalab.fly.dev"
+  "pegwatch:pegwatch:https://pegwatch.fly.dev"
 )
 
 # --- Helpers ---
@@ -72,7 +73,7 @@ if [[ -z "$NEXT_PUBLIC_PLAUSIBLE_DOMAIN" ]]; then
 fi
 
 # --- Deploy each app ---
-log "🚀 Deploying 4 apps to Netlify..."
+log "🚀 Deploying 5 apps to Netlify..."
 
 for entry in "${APPS[@]}"; do
   IFS=':' read -r app_name netlify_name api_url <<< "$entry"
@@ -157,7 +158,7 @@ done
 
 log ""
 log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-ok "🎉 All 4 apps deployed (or dry-run complete)"
+ok "🎉 All 5 apps deployed (or dry-run complete)"
 log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 log ""
 log "📋 Summary:"

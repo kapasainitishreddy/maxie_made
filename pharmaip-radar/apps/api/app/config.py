@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:3000"]
     stripe_secret_key: str | None = None
     stripe_webhook_secret: str = ""
+    stripe_price_starter: str | None = None
+    stripe_price_pro: str | None = None
+    stripe_price_enterprise: str | None = None
     # Set AUTH_BYPASS=true in dev to skip Clerk auth. NEVER use in prod.
     auth_bypass: bool = True
 

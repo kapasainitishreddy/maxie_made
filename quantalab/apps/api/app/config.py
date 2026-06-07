@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     cors_origins: list[str] = ["http://localhost:3003"]
     stripe_secret_key: str | None = None
+    stripe_webhook_secret: str | None = None
+    stripe_price_researcher: str | None = None
+    stripe_price_quant: str | None = None
+    stripe_price_pro: str | None = None
     e2b_api_key: str = ""
     auth_bypass: bool = True
 

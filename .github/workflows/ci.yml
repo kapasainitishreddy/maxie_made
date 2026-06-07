@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab]
+        app: [pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab, pegwatch]
     steps:
       - uses: actions/checkout@v4
       - name: Install uv
@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab]
+        app: [pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab, pegwatch]
     steps:
       - uses: actions/checkout@v4
       - name: Set up pnpm
@@ -115,7 +115,7 @@ jobs:
           echo "" >> report.md
           echo "Generated: $(date -u)" >> report.md
           echo "" >> report.md
-          echo "Apps scanned: pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab" >> report.md
+          echo "Apps scanned: pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab, pegwatch" >> report.md
       - uses: actions/upload-artifact@v4
         with:
           name: security-report

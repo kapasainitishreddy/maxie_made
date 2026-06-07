@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
     cors_origins: list[str] = ["http://localhost:3001"]
     stripe_secret_key: str | None = None
+    stripe_webhook_secret: str | None = None
+    stripe_price_audit: str | None = None
+    stripe_price_performance: str | None = None
     auth_bypass: bool = True
 
 @lru_cache

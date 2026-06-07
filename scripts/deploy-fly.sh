@@ -20,6 +20,7 @@ APPS=(
   "cloudfinops-copilot:cloudfinops-copilot-api:8000"
   "autohedge-pro:autohedge-pro-api:8000"
   "quantalab:quantalab-api:8000"
+  "pegwatch:pegwatch-api:8000"
 )
 
 log()  { echo -e "\033[1;36m$*\033[0m"; }
@@ -62,7 +63,7 @@ NEXT_PUBLIC_PLAUSIBLE_DOMAIN=${NEXT_PUBLIC_PLAUSIBLE_DOMAIN:-}
 SENTRY_DSN=${SENTRY_DSN:-}
 
 # --- Deploy ---
-log "🚀 Deploying 4 backends to Fly.io..."
+log "🚀 Deploying 5 backends to Fly.io..."
 
 for entry in "${APPS[@]}"; do
   IFS=':' read -r app_name fly_app_name _ <<< "$entry"
@@ -141,7 +142,7 @@ done
 
 log ""
 log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-ok "🎉 All 4 backends deployed"
+ok "🎉 All 5 backends deployed"
 log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 log ""
 log "📋 Summary:"

@@ -51,8 +51,7 @@ logs/
 .hermes-tmp.*
 *.tsbuildinfo
 
-# Local-only project (separate monorepo)
-pegwatch/
+# (pegwatch is now part of this monorepo)
 
 # Test artifacts
 playwright-report/

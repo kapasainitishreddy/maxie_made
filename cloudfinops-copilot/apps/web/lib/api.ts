@@ -23,6 +23,12 @@ export const api = {
   del: <T,>(path: string) => request<T>(path, { method: "DELETE" }),
 };
 
+export interface CheckoutResult { url: string; id: string; dev_mode?: boolean; }
+export const billing = {
+  checkout: (plan: string) => api.post<CheckoutResult>("/billing/checkout", { plan }),
+  portal: () => api.post<{ url: string }>("/billing/portal"),
+};
+
 export interface CloudAccount {
   id: string; provider: string; account_id: string; account_name: string;
   region: string; monthly_cost: number; resource_count: number; active: boolean;

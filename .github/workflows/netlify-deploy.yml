@@ -1,0 +1,83 @@
+name: Netlify Deploy
+
+# Auto-deploy all 5 Netlify sites when code is pushed to main.
+# Required Netlify env vars in GitHub repo settings:
+#   NETLIFY_AUTH_TOKEN        - from https://app.netlify.com/user/applications#personal-access-tokens
+#   NETLIFY_SITE_PHARMAIP     - site ID (UUID)
+#   NETLIFY_SITE_CLOUDFINOPS   - site ID
+#   NETLIFY_SITE_AUTOHEDGE    - site ID
+#   NETLIFY_SITE_QUANTALAB    - site ID
+#   NETLIFY_SITE_PEGWATCH     - site ID
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # allow manual trigger
+
+concurrency:
+  group: netlify-deploy-${{ matrix.app }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.app }} to Netlify
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app: pharmaip-radar
+            base: pharmaip-radar/apps/web
+            site_var: NETLIFY_SITE_PHARMAIP
+          - app: cloudfinops-copilot
+            base: cloudfinops-copilot/apps/web
+            site_var: NETLIFY_SITE_CLOUDFINOPS
+          - app: autohedge-pro
+            base: autohedge-pro/apps/web
+            site_var: NETLIFY_SITE_AUTOHEDGE
+          - app: quantalab
+            base: quantalab/apps/web
+            site_var: NETLIFY_SITE_QUANTALAB
+          - app: pegwatch
+            base: pegwatch/apps/web
+            site_var: NETLIFY_SITE_PEGWATCH
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: ${{ matrix.base }}/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.base }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        working-directory: ${{ matrix.base }}
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_placeholder"
+          CLERK_SECRET_KEY: "sk_test_placeholder"
+
+      - name: Deploy to Netlify (Production)
+        working-directory: ${{ matrix.base }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets[matrix.site_var] }}
+        run: |
+          if [ -z "$NETLIFY_SITE_ID" ]; then
+            echo "::error::Secret ${{ matrix.site_var }} is not set in repo settings"
+            exit 1
+          fi
+          # Install netlify CLI without saving to lockfile
+          npm install --no-save netlify-cli
+          npx netlify deploy --prod --dir=.next --site="$NETLIFY_SITE_ID" --auth="$NETLIFY_AUTH_TOKEN" --message="Deploy ${{ matrix.app }} @ ${{ github.sha }}"
+        timeout-minutes: 10
