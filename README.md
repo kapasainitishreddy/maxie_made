@@ -4,18 +4,17 @@ Four full-stack SaaS products, all **$0 to launch**, all **FastAPI + Next.js 15 
 
 [![CI](https://github.com/kapasainitishreddy/maxie_made/actions/workflows/ci.yml/badge.svg)](https://github.com/kapasainitishreddy/maxie_made/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 ## One-click deploy to Netlify
 
-| App | Deploy | Live Demo (after deploy) |
+| App | Deploy | Live URL (after deploy) |
 |---|---|---|
 | **PharmaIP Radar** | [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https%3A%2F%2Fgithub.com%2Fkapasainitishreddy%2Fmaxie_made&base=pharmaip-radar%2Fapps%2Fweb) | `pharmaip-radar.netlify.app` |
 | **CloudFinOps Co-Pilot** | [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https%3A%2F%2Fgithub.com%2Fkapasainitishreddy%2Fmaxie_made&base=cloudfinops-copilot%2Fapps%2Fweb) | `cloudfinops-copilot.netlify.app` |
 | **AutoHedge Pro** | [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https%3A%2F%2Fgithub.com%2Fkapasainitishreddy%2Fmaxie_made&base=autohedge-pro%2Fapps%2Fweb) | `autohedge-pro.netlify.app` |
 | **QuantaLab** | [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https%3A%2F%2Fgithub.com%2Fkapasainitishreddy%2Fmaxie_made&base=quantalab%2Fapps%2Fweb) | `quantalab.netlify.app` |
 
-> Click any button above → it forks this repo to your account and deploys that app's frontend to Netlify. Backend is separate (see [Deployment](#deployment) below).
+> Click any button → forks repo → Netlify deploys that app's frontend. Backend (Fly.io) is separate, see [Deployment](#deployment).
 
 ## All 4 Apps
 
@@ -26,22 +25,20 @@ Four full-stack SaaS products, all **$0 to launch**, all **FastAPI + Next.js 15 
 | **[autohedge-pro](./autohedge-pro)** | Personal hedge fund | 33 ✅ | $99/mo + 0.5% AUM |
 | **[quantalab](./quantalab)** | Quant research IDE | 17 ✅ | $199-999/mo |
 
-**Stack (all 4):**
+**Stack:**
 - Backend: FastAPI 0.115 + SQLAlchemy 2.0 async + Pydantic v2 + uv
 - Frontend: Next.js 15 + React 19 + Tailwind 3 + Clerk + Framer Motion
-- Auth: Clerk (free up to 10k MAU) — dev bypass works without keys
-- Billing: Stripe (no monthly fee)
+- Auth: Clerk (free 10k MAU) — dev bypass works without keys
 - DB: SQLite (local) / Neon Postgres (prod, free 0.5GB)
-- LLM: Ollama (local, $0)
-- Deploy: Netlify (web, $0) + Fly.io (api, $0)
+- Deploy: **Netlify** (frontend, $0) + **Fly.io** (backend, $0)
 
-## Quick Start (any app)
+## Quick Start (local)
 
 ```bash
 # Backend
 cd <app>/apps/api
 uv sync --all-extras
-uv run pytest              # all tests pass
+uv run pytest
 uv run uvicorn app.main:app --reload --port 8000
 
 # Frontend (separate terminal)
@@ -50,56 +47,82 @@ pnpm install
 pnpm dev
 ```
 
-Open http://localhost:3000 for the frontend, http://localhost:8000/docs for the API.
+Open http://localhost:3000 (frontend), http://localhost:8000/docs (API).
 
-## Deployment
+## Deployment (free)
 
-### Frontend → Netlify (free, one click)
-
-**Option A: Use the deploy buttons above** (fastest, no CLI needed)
-
-**Option B: Use the helper script** (after installing [netlify-cli](https://docs.netlify.com/cli/get-started/)):
+### 1. Frontend → Netlify (one click or script)
 
 ```bash
-cd maxie_made
+npm install -g netlify-cli
+netlify login
 ./scripts/deploy-netlify.sh
 ```
 
-This deploys all 4 apps at once. See [scripts/README.md](./scripts/README.md) for details.
+This deploys all 4 frontends. Each gets a free `*.netlify.app` URL.
 
-### Backend → Fly.io (free tier)
+### 2. Backend → Fly.io (one command for all 4)
 
 ```bash
-# Install: https://fly.io/docs/hands-on/install-flyctl/
+curl -L https://fly.io/install.sh | sh  # install
 fly auth signup
-
-# Per app:
-cd pharmaip-radar/apps/api
-fly launch --name pharmaip-radar-api
-fly secrets set DATABASE_URL=postgresql://... CLERK_JWKS_URL=https://...
-fly deploy
+./scripts/deploy-fly.sh
 ```
 
-The frontend's `NEXT_PUBLIC_API_URL` env var should point to your Fly URL (e.g. `https://pharmaip-radar-api.fly.dev`).
+This deploys all 4 backends to `*.fly.dev`. Free tier: 3 shared VMs, 256MB RAM each, auto-stops when idle.
 
-### Database → Neon (free Postgres, 0.5GB)
+### 3. Database → Neon (free 0.5GB Postgres)
 
-1. Sign up at https://neon.tech with GitHub
-2. Create a project, copy the `postgresql+asyncpg://...` connection string
-3. Set it as `DATABASE_URL` in your backend's env (Fly.io secrets)
+```bash
+# Sign up at https://neon.tech (GitHub OAuth, 2 min)
+./scripts/setup-neon.sh
+```
 
-For local dev, SQLite is used by default (no setup needed).
+Paste your connection string when prompted. Auto-configures all 4 backends.
+
+### 4. Auth → Clerk (free 10k MAU)
+
+```bash
+# Sign up at https://clerk.com (GitHub OAuth, 2 min)
+./scripts/setup-clerk.sh
+```
+
+Paste your keys when prompted. The dev bypass auto-disables when keys are present.
+
+### 5. Wire it all together
+
+```bash
+./scripts/connect-frontend-to-backend.sh
+```
+
+Updates the frontend env vars to point to the live backends, triggers a redeploy.
+
+## Custom domains — cost guide
+
+| Option | Cost | Notes |
+|---|---|---|
+| Free `*.netlify.app` subdomain | $0 | Fine for testing/portfolio |
+| Free `*.fly.dev` subdomain | $0 | For backend |
+| `.com` domain | $9-15/yr | Buy from Cloudflare Registrar or Porkbun |
+| `.app` domain | $15/yr | Good for SaaS feel |
+| `.io` domain | $30-50/yr | Premium dev tool feel |
+| 1 `.com` + 15 subdomains | $10/yr total | Cheapest real-launch option |
+
+**My pick for 15 apps**: Buy 1 `.com` (e.g. `yourcompany.com`), use subdomains: `pharmaip.yourcompany.com`, `cloud.yourcompany.com`, etc. **$10/yr total.**
+
+Free alternatives if you really want $0:
+- `pharmaip.netlify.app` (works, looks decent)
+- `pharmaip.onrender.com` (less pro)
+- Use just the GitHub Pages URL
 
 ## What's included
 
-- ✅ **140 backend tests** passing (4 apps × 35 avg tests)
+- ✅ **140 backend tests** passing
 - ✅ **Custom SVG logos** for all 4 apps
 - ✅ **3D animated heroes** with floating cards
-- ✅ **"How it works"** 4-step process diagrams
-- ✅ **"Real case study"** scenario sections
+- ✅ **"How it works"** + **"Real case study"** sections
 - ✅ **Working dashboards** with real seeded data
-- ✅ **Pricing pages** for all 4 apps
-- ✅ **Privacy / Terms / Security** pages for all 4 apps
+- ✅ **Pricing pages** + **Privacy/Terms/Security** pages
 - ✅ **Rate limiting** (100/min read, 30/min write per IP)
 - ✅ **OWASP security headers** (HSTS, CSP, X-Frame-Options, etc.)
 - ✅ **Sentry** error tracking (no-op when DSN not set)
@@ -107,8 +130,23 @@ For local dev, SQLite is used by default (no setup needed).
 - ✅ **CI/CD** via GitHub Actions (pytest + pip-audit + bandit + pnpm audit)
 - ✅ **Weekly security scans** scheduled in CI
 - ✅ **netlify.toml** for all 4 apps (one-click deploy)
+- ✅ **fly.toml** for all 4 apps (one-command deploy)
 - ✅ **Helper scripts** for bash and Windows
+- ✅ **Auto-setup scripts** for Clerk + Neon
+
+## Cost summary (per month, until you scale)
+
+| Service | Free tier | Where you pay |
+|---|---|---|
+| Netlify (frontend) | 100GB bandwidth, unlimited sites | Never, for indie |
+| Fly.io (backend) | 3 VMs, 256MB each, 100GB egress | Never, for indie |
+| Neon (database) | 0.5GB storage, 100 hrs compute | Never, for indie |
+| Clerk (auth) | 10,000 monthly active users | $25/mo after 10k MAU |
+| Plausible (analytics) | Self-host free, or $9/mo hosted | Optional |
+| Sentry (errors) | 5,000 events/mo | $26/mo after 5k events |
+| Stripe (payments) | Pay per transaction (2.9% + 30¢) | Only when you earn |
+| **TOTAL** | **$0** until you get paying users | Scales with success |
 
 ## License
 
-MIT — see [LICENSE](./LICENSE) (add this file before going public).
+MIT — see [LICENSE](./LICENSE).

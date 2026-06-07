@@ -20,10 +20,10 @@ if [[ "${1:-}" == "--dry-run" ]]; then
 fi
 
 APPS=(
-  "pharmaip-radar:pharmaip-radar.netlify.app:https://pharmaip-radar.fly.dev"
-  "cloudfinops-copilot:cloudfinops-copilot.netlify.app:https://cloudfinops-copilot.fly.dev"
-  "autohedge-pro:autohedge-pro.netlify.app:https://autohedge-pro.fly.dev"
-  "quantalab:quantalab.netlify.app:https://quantalab.fly.dev"
+  "pharmaip-radar:pharmaip-radar:https://pharmaip-radar.fly.dev"
+  "cloudfinops-copilot:cloudfinops-copilot:https://cloudfinops-copilot.fly.dev"
+  "autohedge-pro:autohedge-pro:https://autohedge-pro.fly.dev"
+  "quantalab:quantalab:https://quantalab.fly.dev"
 )
 
 # --- Helpers ---
@@ -75,14 +75,16 @@ fi
 log "🚀 Deploying 4 apps to Netlify..."
 
 for entry in "${APPS[@]}"; do
-  IFS=':' read -r app_name netlify_subdomain api_url <<< "$entry"
+  IFS=':' read -r app_name netlify_name api_url <<< "$entry"
   netlify_dir="$app_name/apps/web"
+  netlify_subdomain="${netlify_name}.netlify.app"
 
   log ""
   log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   log "📦 Deploying: $app_name"
-  log "   Subdomain: $netlify_subdomain"
-  log "   API URL:   $api_url"
+  log "   Site name: $netlify_name"
+  log "   URL: https://$netlify_subdomain"
+  log "   API URL:  $api_url"
   log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
   if [[ ! -d "$netlify_dir" ]]; then
@@ -101,14 +103,14 @@ for entry in "${APPS[@]}"; do
   else
     # Create or link the site
     if $DRY_RUN; then
-      echo "[dry-run] netlify sites:create --name $netlify_subdomain"
+      echo "[dry-run] netlify sites:create --name $netlify_name"
     else
-      log "Creating new site: $netlify_subdomain"
+      log "Creating new site: $netlify_name"
       # Use --yes to skip interactive prompts
-      netlify sites:create --name "$netlify_subdomain" --ci || {
+      netlify sites:create --name "$netlify_name" --with-ci || {
         warn "Site may already exist. Trying to link by name..."
-        netlify link --name "$netlify_subdomain" || {
-          err "Could not create or link $netlify_subdomain"
+        netlify link --name "$netlify_name" || {
+          err "Could not create or link $netlify_name"
           cd - >/dev/null
           continue
         }

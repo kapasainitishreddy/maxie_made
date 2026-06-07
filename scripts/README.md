@@ -1,108 +1,106 @@
-# Deployment Scripts
+# Deployment & Setup Scripts
 
-Helper scripts for deploying the 4 SaaS apps to Netlify and managing them.
+Helper scripts for deploying the 4 SaaS apps to production.
 
-## Quick start
+## Quick start (full deployment in 5 steps)
 
 ```bash
-# 1. Install Netlify CLI (one time)
+# Step 1: Install CLIs (one time)
 npm install -g netlify-cli
+curl -L https://fly.io/install.sh | sh  # or use winget on Windows
 
-# 2. Log in (opens browser)
+# Step 2: Authenticate
 netlify login
+fly auth signup
 
-# 3. Deploy all 4 apps at once
-./scripts/deploy-netlify.sh
+# Step 3: Set up free services
+./scripts/setup-neon.sh      # free Postgres
+./scripts/setup-clerk.sh     # free auth (10k MAU)
+
+# Step 4: Deploy
+./scripts/deploy-fly.sh      # 4 backends to Fly.io
+./scripts/deploy-netlify.sh  # 4 frontends to Netlify
+./scripts/connect-frontend-to-backend.sh  # wire them together
 ```
 
-## Windows (PowerShell)
+## Windows (PowerShell equivalents)
 
 ```powershell
+.\scripts\setup-neon.ps1
+.\scripts\setup-clerk.ps1
+.\scripts\deploy-fly.ps1
 .\scripts\deploy-netlify.ps1
+.\scripts\connect-frontend-to-backend.ps1
 ```
 
-## Dry run (test without deploying)
+## All scripts
+
+| Script | Windows | What it does |
+|---|---|---|
+| `deploy-netlify.sh` | `deploy-netlify.ps1` | Deploy all 4 frontends to Netlify |
+| `deploy-fly.sh` | `deploy-fly.ps1` | Deploy all 4 backends to Fly.io |
+| `connect-frontend-to-backend.sh` | `connect-frontend-to-backend.ps1` | Update Netlify env vars to point to Fly backends |
+| `setup-clerk.sh` | `setup-clerk.ps1` | Write Clerk keys to all 4 apps' .env files |
+| `setup-neon.sh` | `setup-neon.ps1` | Write Neon connection string to all 4 backends |
+| `netlify-help.sh` | `netlify-help.bat` | Common Netlify CLI commands |
+| `fly-help.sh` | `fly-help.bat` | Common Fly.io CLI commands |
+
+## Setup guides
+
+- `clerk-setup.md` — Step-by-step Clerk setup
+- `neon-setup.md` — Step-by-step Neon Postgres setup
+
+## Dry-run mode
+
+Both deploy scripts support `--dry-run` (bash) or `-DryRun` (PowerShell) to preview changes without making them:
 
 ```bash
+./scripts/deploy-fly.sh --dry-run
 ./scripts/deploy-netlify.sh --dry-run
 ```
 
-```powershell
-.\scripts\deploy-netlify.ps1 -DryRun
-```
-
-## What the script does
-
-For each of the 4 apps (pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab):
-
-1. Creates a new Netlify site (or links to existing one)
-2. Sets environment variables (API URL, Clerk, Plausible, Sentry)
-3. Triggers a production deploy
-
-The script is **idempotent** — re-running it updates existing sites rather than creating duplicates.
-
-## Prerequisites
-
-| Tool | Why | Install |
-|---|---|---|
-| `netlify` | Netlify CLI | `npm install -g netlify-cli` |
-| `node` | Required by Netlify CLI | https://nodejs.org |
-| `gh` (optional) | GitHub repo info | `winget install GitHub.cli` |
-
-## Environment variables
-
-Set these before running the script (optional — all have dev-bypass fallbacks):
+## Common workflow
 
 ```bash
-export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_live_xxxxx"
-export NEXT_PUBLIC_PLAUSIBLE_DOMAIN="pharmaip-radar.com"
-export SENTRY_DSN="https://xxxxx@sentry.io/12345"
+# 1. Make a code change
+# 2. Test locally
+cd pharmaip-radar/apps/api && uv run pytest
+cd pharmaip-radar/apps/web && pnpm dev
+
+# 3. Commit + push (auto-deploys to Netlify if connected to GitHub)
+git add . && git commit -m "feat: new feature"
+git push origin main
+
+# 4. For backend changes, redeploy to Fly
+cd pharmaip-radar/apps/api && fly deploy
+
+# 5. View logs if something breaks
+fly logs
+netlify logs
 ```
 
-The script will prompt for any that aren't set.
+## Custom domain setup
 
-## Common commands reference
+After deployment, add a custom domain:
 
-For a quick reference of all Netlify CLI commands, run:
-
+**On Netlify** (frontend):
 ```bash
-./scripts/netlify-help.sh           # all sections
-./scripts/netlify-help.sh setup     # first-time setup only
-./scripts/netlify-help.sh env       # env var commands
-./scripts/netlify-help.sh troubleshoot
+cd pharmaip-radar/apps/web
+netlify domains:add pharmaip.com
 ```
 
-Or on Windows:
-
-```cmd
-scripts\netlify-help.bat
-scripts\netlify-help.bat env
-```
-
-## After deployment
-
-Once deployed, your 4 apps will be live at:
-
-- `https://pharmaip-radar.netlify.app`
-- `https://cloudfinops-copilot.netlify.app`
-- `https://autohedge-pro.netlify.app`
-- `https://quantalab.netlify.app`
-
-Optional next steps:
-1. **Custom domains**: `netlify domains:add yourdomain.com`
-2. **Connect to GitHub for auto-deploy**: `netlify link` then connect in dashboard
-3. **Configure Clerk** (real auth): Set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-4. **Add Plausible analytics**: Set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`
-5. **Add Sentry error tracking**: Set `SENTRY_DSN`
-
-## Rollback
-
-If a deploy breaks something:
-
+**On Fly.io** (backend):
 ```bash
-# List recent deploys
-netlify deploy:list
-
-# Roll back to a specific deploy
-netlify rollback
+cd pharmaip-radar/apps/api
+fly certs create api.pharmaip.com
 ```
+
+Then in your DNS provider, point:
+- `pharmaip.com` → Netlify (CNAME or A records they give you)
+- `api.pharmaip.com` → Fly.io (A or AAAA records they give you)
+
+Free vs paid domains:
+- **Free**: `app.netlify.app` subdomain (no custom domain)
+- **~$10/yr**: `.com` from Cloudflare Registrar or Porkbun
+- **~$15/yr**: `.app` TLD (good for SaaS feel)
+- **~$30-50/yr**: `.io` (good for dev tools)

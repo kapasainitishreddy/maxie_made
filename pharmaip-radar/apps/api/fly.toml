@@ -1,0 +1,49 @@
+# Fly.io config for PharmaIP Radar backend
+# Docs: https://fly.io/docs/reference/configuration/
+
+app = "pharmaip-radar-api"
+primary_region = "iad"  # US East (Virginia) - closest to most US users
+# Available regions: https://fly.io/docs/reference/regions/
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  APP_ENV = "production"
+  PORT = "8000"
+  PYTHONUNBUFFERED = "1"
+  # DATABASE_URL is set via `fly secrets set`
+  # CLERK_JWKS_URL is set via `fly secrets set`
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"   # free tier: stop when idle
+  auto_start_machines = true
+  min_machines_running = 0      # free tier: scale to zero when idle
+  processes = ["app"]
+  protocol = "tcp"
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 100
+    soft_limit = 80
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/health"
+
+[[vm]]
+  size = "shared-cpu-1x"   # free tier: 256MB RAM
+  memory = "256mb"
+  cpus = 1
+
+[deploy]
+  release_command = "python -c 'from app.core.db import engine; print(\"db ok\")'"
+
+[metrics]
+  port = 8000
+  path = "/metrics"
