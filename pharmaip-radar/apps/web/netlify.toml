@@ -1,0 +1,61 @@
+# Netlify config for PharmaIP Radar frontend
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  base = "pharmaip-radar/apps/web"
+  command = "pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "9"
+
+# Next.js runtime (handles SSR, ISR, image optimization)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Production environment variables
+# Set these in Netlify UI: Site settings → Environment variables
+# NEXT_PUBLIC_API_URL = "https://pharmaip-radar-api.fly.dev"
+# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_..."
+# CLERK_SECRET_KEY = "sk_live_..."
+# NEXT_PUBLIC_PLAUSIBLE_DOMAIN = "pharmaip-radar.netlify.app"
+
+# Security headers (matches backend OWASP headers)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.fly.dev https://plausible.io; frame-ancestors 'none'"
+
+# Cache static assets aggressively
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache images
+[[headers]]
+  for = "/_next/image*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirect /api/* to backend (CORS-friendly)
+[[redirects]]
+  from = "/api/proxy/*"
+  to = "https://pharmaip-radar-api.fly.dev/api/:splat"
+  status = 200
+  force = true
+  [redirects.headers]
+    X-Forwarded-Host = "pharmaip-radar.netlify.app"
+
+# SPA-style fallback for Next.js
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

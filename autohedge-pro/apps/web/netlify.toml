@@ -1,0 +1,50 @@
+# Netlify config for AutoHedge Pro frontend
+
+[build]
+  base = "autohedge-pro/apps/web"
+  command = "pnpm build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  PNPM_VERSION = "9"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# NEXT_PUBLIC_API_URL = "https://autohedge-api.fly.dev"
+# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = "pk_live_..."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.fly.dev https://plausible.io; frame-ancestors 'none'"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/_next/image*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/api/proxy/*"
+  to = "https://autohedge-api.fly.dev/api/:splat"
+  status = 200
+  force = true
+  [redirects.headers]
+    X-Forwarded-Host = "autohedge-pro.netlify.app"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
