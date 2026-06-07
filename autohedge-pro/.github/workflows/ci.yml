@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend:
+    name: Backend (FastAPI)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install uv
+        run: pip install uv
+      - name: Install dependencies
+        run: uv sync --extra dev
+      - name: Run tests
+        env:
+          DATABASE_URL: "sqlite+aiosqlite:///:memory:"
+          JWT_SECRET: test-secret-for-ci-only
+          DEV_AUTH_BYPASS: "true"
+        run: uv run pytest -v --tb=short
+      - name: Bandit security scan
+        run: uv run bandit -r app/ -f json -o bandit-report.json || true
+      - name: Upload Bandit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: apps/api/bandit-report.json
+      - name: pip-audit (dependency vulnerabilities)
+        run: uv run pip-audit || true
+
+  frontend:
+    name: Frontend (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - name: Install pnpm
+        run: npm install -g pnpm@9
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: TypeScript type check
+        run: pnpm exec tsc --noEmit
+      - name: Build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8002
+        run: pnpm build
+      - name: pnpm audit (dependency vulnerabilities)
+        run: pnpm audit --prod
+
+  security:
+    name: Security audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run Bandit + pip-audit
+        run: |
+          pip install bandit pip-audit
+          cd apps/api
+          bandit -r app/ -ll
+          pip-audit -r pyproject.toml
+      - name: Run gitleaks (secret scan)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

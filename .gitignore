@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build outputs
+.next/
+dist/
+build/
+*.tsbuildinfo
+.ruff_cache/
+.pytest_cache/
+coverage/
+
+# Environment files (ONLY .env.example should be tracked)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Deployment
+.vercel/
+.turbo/
+.fly/
+.netlify/
+.gcloudignore
+
+# Databases (don't commit SQLite files)
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated content
+.hermes/
+.hermes-tmp.*
+*.tsbuildinfo
+
+# Local-only project (separate monorepo)
+pegwatch/
+
+# Test artifacts
+playwright-report/
+test-results/
+.coverage
+htmlcov/

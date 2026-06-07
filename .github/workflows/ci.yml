@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    # Weekly security scan on Mondays at 9am UTC
+    - cron: "0 9 * * 1"
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # -------- Backend tests (Python) --------
+  backend-tests:
+    name: Backend tests (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.5"
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+      - name: Install dependencies
+        working-directory: ${{ matrix.app }}/apps/api
+        run: |
+          uv sync
+          uv pip install pip-audit
+      - name: Run tests
+        working-directory: ${{ matrix.app }}/apps/api
+        run: uv run pytest -v --tb=short
+      - name: Security audit (pip-audit)
+        working-directory: ${{ matrix.app }}/apps/api
+        run: uv run pip-audit || echo "::warning::pip-audit found issues"
+      - name: Bandit security scan
+        working-directory: ${{ matrix.app }}/apps/api
+        run: |
+          uv pip install bandit
+          uv run bandit -r app/ -f json -o bandit-report.json || true
+          uv run bandit -r app/ -ll
+
+  # -------- Frontend tests (Node) --------
+  frontend-tests:
+    name: Frontend build (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: ${{ matrix.app }}/apps/web/pnpm-lock.yaml
+      - name: Install dependencies
+        working-directory: ${{ matrix.app }}/apps/web
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        working-directory: ${{ matrix.app }}/apps/web
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_placeholder"
+          CLERK_SECRET_KEY: "sk_test_placeholder"
+      - name: Lint
+        working-directory: ${{ matrix.app }}/apps/web
+        run: pnpm lint || echo "::warning::lint issues found"
+      - name: Audit dependencies
+        working-directory: ${{ matrix.app }}/apps/web
+        run: pnpm audit --prod || echo "::warning::pnpm audit found issues"
+
+  # -------- Secret scanning --------
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for secrets
+        run: |
+          # Look for real keys (not placeholders)
+          if grep -rE "sk_live_[a-zA-Z0-9]{20,}" --include="*.py" --include="*.ts" --include="*.tsx" . 2>&1; then
+            echo "::error::Found live Stripe key in code"
+            exit 1
+          fi
+          if grep -rE "AKIA[0-9A-Z]{16}" --include="*.py" --include="*.ts" --include="*.tsx" . 2>&1; then
+            echo "::error::Found AWS access key in code"
+            exit 1
+          fi
+          echo "No secrets found ✓"
+
+  # -------- Weekly security summary --------
+  security-summary:
+    name: Weekly security summary
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate security report
+        run: |
+          echo "## Weekly security report" > report.md
+          echo "" >> report.md
+          echo "Generated: $(date -u)" >> report.md
+          echo "" >> report.md
+          echo "Apps scanned: pharmaip-radar, cloudfinops-copilot, autohedge-pro, quantalab" >> report.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: report.md
