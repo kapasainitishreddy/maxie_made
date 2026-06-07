@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { ManageSubscriptionButton } from "@/components/billing/manage-subscription-button";
 
 export default function SettingsPage() {
   return (
@@ -38,7 +39,7 @@ export default function SettingsPage() {
           <CardDescription>Manage your subscription via Stripe</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline">Open billing portal</Button>
+          <ManageSubscriptionButton />
         </CardContent>
       </Card>
 

@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
 
-interface UpgradeButtonProps {
-  plan: string;
+interface ManageSubscriptionButtonProps {
   className?: string;
   variant?: "default" | "outline" | "secondary" | "ghost" | "destructive";
   size?: "default" | "sm" | "lg" | "icon";
@@ -13,17 +12,15 @@ interface UpgradeButtonProps {
 }
 
 /**
- * Generic upgrade button: calls /billing/checkout, redirects to Stripe session URL.
- * In dev-bypass mode (no STRIPE_SECRET_KEY on backend), the API returns a demo URL
- * that the backend's app code handles (or we just navigate to /pricing?demo=1).
+ * Opens Stripe customer portal (or demo URL in dev-bypass mode).
+ * Customer can update card, change plan, cancel, download invoices.
  */
-export function UpgradeButton({
-  plan,
+export function ManageSubscriptionButton({
   className,
-  variant = "default",
+  variant = "outline",
   size = "default",
-  children = "Start free trial",
-}: UpgradeButtonProps) {
+  children = "Manage subscription",
+}: ManageSubscriptionButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,45 +33,38 @@ export function UpgradeButton({
       const API_BASE = process.env.NEXT_PUBLIC_API_URL
         ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1`
         : "/api/proxy";
-      const r = await fetch(`${API_BASE}/billing/checkout`, {
+      const r = await fetch(`${API_BASE}/billing/portal`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
       });
       if (!r.ok) {
         const body = await r.json().catch(() => ({}));
         throw new Error(body.detail || body.error || `HTTP ${r.status}`);
       }
       const data = await r.json();
-      // data.url is either a real Stripe checkout URL or a dev-bypass URL
       window.location.href = data.url;
     } catch (e: any) {
-      setError(e?.message || "Checkout failed");
+      setError(e?.message || "Failed to open billing portal");
       setLoading(false);
     }
   };
 
   return (
     <div className={className}>
-      <Button
-        onClick={handleClick}
-        disabled={loading}
-        variant={variant}
-        size={size}
-        className="w-full"
-      >
+      <Button onClick={handleClick} disabled={loading} variant={variant} size={size}>
         {loading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Redirecting...
+            Opening...
           </>
         ) : (
-          children
+          <>
+            <ExternalLink className="mr-2 h-4 w-4" />
+            {children}
+          </>
         )}
       </Button>
-      {error && (
-        <p className="mt-2 text-xs text-red-400 text-center">{error}</p>
-      )}
+      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
     </div>
   );
 }

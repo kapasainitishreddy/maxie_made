@@ -2,23 +2,21 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { ExternalLink, Loader2 } from "lucide-react";
 
-interface UpgradeButtonProps {
-  plan: string;
+interface ManageSubscriptionButtonProps {
   className?: string;
   variant?: "primary" | "secondary" | "ghost" | "outline";
   size?: "sm" | "md" | "lg";
   children?: React.ReactNode;
 }
 
-export function UpgradeButton({
-  plan,
+export function ManageSubscriptionButton({
   className,
-  variant = "primary",
+  variant = "outline",
   size = "md",
-  children = "Start free trial",
-}: UpgradeButtonProps) {
+  children = "Manage subscription",
+}: ManageSubscriptionButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,10 +24,9 @@ export function UpgradeButton({
     setLoading(true);
     setError(null);
     try {
-      const r = await fetch(`/api/v1/billing/checkout`, {
+      const r = await fetch(`/api/v1/billing/portal`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
       });
       if (!r.ok) {
         const body = await r.json().catch(() => ({}));
@@ -38,30 +35,27 @@ export function UpgradeButton({
       const data = await r.json();
       window.location.href = data.url;
     } catch (e: any) {
-      setError(e?.message || "Checkout failed");
+      setError(e?.message || "Failed to open billing portal");
       setLoading(false);
     }
   };
 
   return (
     <div className={className}>
-      <Button
-        onClick={handleClick}
-        disabled={loading}
-        variant={variant}
-        size={size}
-        className="w-full"
-      >
+      <Button onClick={handleClick} disabled={loading} variant={variant} size={size}>
         {loading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Redirecting...
+            Opening...
           </>
         ) : (
-          children
+          <>
+            <ExternalLink className="mr-2 h-4 w-4" />
+            {children}
+          </>
         )}
       </Button>
-      {error && <p className="mt-2 text-xs text-red-400 text-center">{error}</p>}
+      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
     </div>
   );
 }

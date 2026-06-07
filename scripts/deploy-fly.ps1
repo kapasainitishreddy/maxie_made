@@ -1,4 +1,4 @@
-# deploy-fly.ps1 - Deploy all 4 SaaS backend APIs to Fly.io from this monorepo
+# deploy-fly.ps1 - Deploy all 5 SaaS backend APIs to Fly.io from this monorepo
 # Usage: .\scripts\deploy-fly.ps1 [-DryRun]
 
 param([switch]$DryRun)
@@ -9,7 +9,8 @@ $Apps = @(
   @{ Name = "pharmaip-radar";      FlyName = "pharmaip-radar-api" },
   @{ Name = "cloudfinops-copilot"; FlyName = "cloudfinops-copilot-api" },
   @{ Name = "autohedge-pro";       FlyName = "autohedge-pro-api" },
-  @{ Name = "quantalab";           FlyName = "quantalab-api" }
+  @{ Name = "quantalab";           FlyName = "quantalab-api" },
+  @{ Name = "pegwatch";            FlyName = "pegwatch-api" }
 )
 
 function Log($m)  { Write-Host "`n$m" -ForegroundColor Cyan }
@@ -95,7 +96,7 @@ foreach ($app in $Apps) {
 }
 
 Log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-Ok "🎉 All 4 backends deployed"
+Ok "🎉 All 5 backends deployed"
 Log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 Log ""
 Log "📋 Summary:"

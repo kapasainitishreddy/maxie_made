@@ -31,9 +31,12 @@ export function UpgradeButton({
     setLoading(true);
     setError(null);
     try {
-      // Try the standard fetch wrapper first
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
-      const r = await fetch(`${API_BASE}/api/v1/billing/checkout`, {
+      // In dev, go through Next.js proxy at /api/proxy/* (rewrites to backend).
+      // In prod, NEXT_PUBLIC_API_URL points directly at Fly.io and we bypass the proxy.
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL
+        ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1`
+        : "/api/proxy";
+      const r = await fetch(`${API_BASE}/billing/checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan }),

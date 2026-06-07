@@ -1,4 +1,4 @@
-# deploy-netlify.ps1 - Deploy all 4 SaaS apps to Netlify from this monorepo
+# deploy-netlify.ps1 - Deploy all 5 SaaS apps to Netlify from this monorepo
 # Usage: .\scripts\deploy-netlify.ps1 [-DryRun]
 #
 # Prerequisites:
@@ -14,7 +14,8 @@ $Apps = @(
   @{ Name = "pharmaip-radar";     Subdomain = "pharmaip-radar.netlify.app";     ApiUrl = "https://pharmaip-radar.fly.dev" },
   @{ Name = "cloudfinops-copilot"; Subdomain = "cloudfinops-copilot.netlify.app"; ApiUrl = "https://cloudfinops-copilot.fly.dev" },
   @{ Name = "autohedge-pro";      Subdomain = "autohedge-pro.netlify.app";      ApiUrl = "https://autohedge-pro.fly.dev" },
-  @{ Name = "quantalab";          Subdomain = "quantalab.netlify.app";          ApiUrl = "https://quantalab.fly.dev" }
+  @{ Name = "quantalab";          Subdomain = "quantalab.netlify.app";          ApiUrl = "https://quantalab.fly.dev" },
+  @{ Name = "pegwatch";           Subdomain = "pegwatch.netlify.app";           ApiUrl = "https://pegwatch.fly.dev" }
 )
 
 # --- Helpers ---
@@ -51,7 +52,7 @@ if (-not $ClerkKey) { Warn "No NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY — using dev b
 if (-not $PlausibleDomain) { Warn "No NEXT_PUBLIC_PLAUSIBLE_DOMAIN — analytics disabled" }
 
 # --- Deploy each app ---
-Log "🚀 Deploying 4 apps to Netlify..."
+Log "🚀 Deploying 5 apps to Netlify..."
 
 foreach ($app in $Apps) {
   $appName = $app.Name
@@ -121,7 +122,7 @@ foreach ($app in $Apps) {
 }
 
 Log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-Ok "🎉 All 4 apps deployed"
+Ok "🎉 All 5 apps deployed"
 Log "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 Log ""
 Log "📋 Summary:"
