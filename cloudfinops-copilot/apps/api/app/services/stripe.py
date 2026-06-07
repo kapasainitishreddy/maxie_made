@@ -31,3 +31,12 @@ class StripeClient:
             metadata={"org_id": org_id} if org_id else {},
         )
         return {"url": session.url, "id": session.id}
+
+    def create_portal_session(self, customer_id: str, return_url: str) -> str:
+        if not self._has_key:
+            return f"{return_url}?demo_portal=1"
+        session = stripe.billing_portal.Session.create(
+            customer=customer_id,
+            return_url=return_url,
+        )
+        return session.url
