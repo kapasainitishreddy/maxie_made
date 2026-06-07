@@ -142,6 +142,8 @@ for entry in "${APPS[@]}"; do
     echo "[dry-run] netlify deploy --prod"
   else
     log "Deploying to production..."
+    # Clean stale .netlify build cache (fixes EEXIST symlink errors)
+    rm -rf .netlify .next/cache 2>/dev/null || true
     netlify deploy --prod --dir=.next 2>&1 | tail -10 || {
       err "Deploy failed for $app_name"
       cd - >/dev/null

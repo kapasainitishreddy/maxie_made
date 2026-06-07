@@ -96,9 +96,11 @@ export interface InfringementAlert {
   created_at: string;
 }
 
+export type ReportType = "fto" | "landscape" | "infringement" | "patentability";
+
 export interface Report {
   id: string;
-  report_type: "fto" | "landscape" | "infringement" | "patentability";
+  report_type: ReportType;
   title: string;
   status: "queued" | "generating" | "ready" | "failed";
   query: Record<string, any>;

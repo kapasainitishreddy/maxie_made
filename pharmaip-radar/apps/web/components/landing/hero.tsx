@@ -3,76 +3,138 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, FileSearch, AlertTriangle, BarChart3, Lock, Sparkles, Building2 } from "lucide-react";
 import { Hero3D } from "./hero3d";
+import { MagneticButton, FloatingBadge, Counter, Typewriter, ScrollReveal } from "@/components/fx/motion";
+import { ArrowRight, Sparkles, Zap, Shield, FileSearch, Brain } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-radial" />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(99,102,241,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
+    <section className="relative overflow-hidden aurora-bg noise">
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 -z-10 grid-bg mask-radial" />
 
-      <div className="container mx-auto px-4 pt-20 pb-24 md:pt-32 md:pb-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Floating gradient orbs */}
+      <div className="absolute top-1/4 left-1/4 -z-10 h-72 w-72 rounded-full bg-violet-500/20 blur-[120px] float" />
+      <div className="absolute bottom-1/4 right-1/4 -z-10 h-96 w-96 rounded-full bg-blue-500/15 blur-[120px] float-delayed" />
+
+      <div className="container mx-auto px-4 pt-24 pb-24 md:pt-32 md:pb-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: copy */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-left"
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full border border-accent/30 bg-accent/5 text-sm">
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
-              <span className="text-text-muted">Trusted by 30+ pharma IP teams</span>
-            </div>
+          <div className="relative z-10">
+            <FloatingBadge>
+              <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium text-text-muted">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                </span>
+                Live · 100M+ patents indexed
+              </div>
+            </FloatingBadge>
 
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
-              The <span className="text-gradient">pharma IP radar</span><br />
-              your legal team needs.
-            </h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="mt-8 text-5xl md:text-7xl font-bold tracking-tight text-balance"
+            >
+              The <span className="gradient-text">pharma IP radar</span> your legal team needs
+            </motion.h1>
 
-            <p className="text-xl md:text-2xl text-text-muted mb-10 leading-relaxed">
-              Scan 100M+ global patents, detect infringement in minutes, and generate investor-grade FTO reports — all from a single terminal.
-            </p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="mt-6 text-lg md:text-xl text-text-muted max-w-xl text-balance"
+            >
+              Ingest 100M+ patents. Detect infringement in seconds.
+              Run FTO analyses with AI claim scoring. The fastest way to <Typewriter words={["protect", "license", "monetize", "defend"]} className="text-text" /> your pharma IP.
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className="text-base">
-                <Link href="/sign-up">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="mt-10 flex flex-wrap items-center gap-4"
+            >
+              <MagneticButton
+                strength={0.25}
+                className="group relative inline-flex h-12 items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-blue-500 px-7 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition-shadow hover:shadow-violet-500/40"
+              >
+                <Link href="/sign-up" className="flex items-center gap-2">
                   Start free trial
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
+              </MagneticButton>
+
+              <MagneticButton
+                strength={0.25}
+                className="inline-flex h-12 items-center gap-2 rounded-full glass-elevated px-6 text-sm font-medium text-text hover:bg-bg-surface-hover transition-colors"
+              >
                 <Link href="/pricing">View pricing</Link>
-              </Button>
-            </div>
+              </MagneticButton>
+            </motion.div>
 
-            <p className="mt-6 text-sm text-text-muted">
-              No credit card. 14-day trial. $0 to launch.
-            </p>
-          </motion.div>
+            {/* Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="mt-12 grid grid-cols-3 gap-6 max-w-md"
+            >
+              <div>
+                <div className="text-3xl font-bold gradient-text-static">
+                  <Counter to={100} suffix="M+" />
+                </div>
+                <div className="text-xs text-text-muted mt-1">patents indexed</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold gradient-text-static">
+                  <Counter to={6} duration={1.5} />h
+                </div>
+                <div className="text-xs text-text-muted mt-1">avg FTO time</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold gradient-text-static">
+                  $<Counter to={177} duration={2.5} suffix="k" />
+                </div>
+                <div className="text-xs text-text-muted mt-1">avg savings/case</div>
+              </div>
+            </motion.div>
+          </div>
 
-          {/* Right: 3D */}
+          {/* Right: 3D hero */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
           >
             <Hero3D />
           </motion.div>
         </div>
+
+        {/* Trust strip */}
+        <ScrollReveal delay={0.6} className="mt-20">
+          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 text-sm text-text-muted">
+            <span className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-emerald-400" />
+              SOC 2 Type II
+            </span>
+            <span className="flex items-center gap-2">
+              <FileSearch className="h-4 w-4 text-blue-400" />
+              USPTO + EPO + WIPO
+            </span>
+            <span className="flex items-center gap-2">
+              <Brain className="h-4 w-4 text-violet-400" />
+              GPT-4o + Claude 3.5
+            </span>
+            <span className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-amber-400" />
+              Sub-200ms latency
+            </span>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
-  );
-}
-
-function StatCard({ label, value, trend }: { label: string; value: string; trend: string }) {
-  return (
-    <div className="rounded-lg bg-bg-elevated border border-border p-4">
-      <div className="text-xs text-text-muted mb-1">{label}</div>
-      <div className="text-2xl font-bold">{value}</div>
-      <div className="text-xs text-emerald-400 mt-1">{trend} this month</div>
-    </div>
   );
 }
