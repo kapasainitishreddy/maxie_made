@@ -5,9 +5,9 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/notebook", label: "Notebook" },
   { href: "/marketplace", label: "Marketplace" },
-  { href: "/notebook#results", label: "Results" },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
