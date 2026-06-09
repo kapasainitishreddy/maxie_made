@@ -1,9 +1,12 @@
-# 🚀 maxie_made — 5 Production-Ready SaaS Apps
+# 🚀 SRB — Five Production-Ready SaaS Apps
 
-Five full-stack SaaS products, all **$0 to launch**, all **FastAPI + Next.js 15 + SQLite/Postgres**.
+**Sisira · Rathnakar · Bhagya** — Built by one. Shipped for many.
 
-[![CI](https://github.com/kapasainitishreddy/maxie_made/actions/workflows/ci.yml/badge.svg)](https://github.com/kapasainitishreddy/maxie_made/actions)
+Five full-stack SaaS products under the SRB studio umbrella, all **$0 to launch**, all **FastAPI + Next.js 15 + SQLite/Postgres**.
+
+[![CI](https://github.com/kapasainitishreddy/srb/actions/workflows/ci.yml/badge.svg)](https://github.com/kapasainitishreddy/srb/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![SRB Studio](https://img.shields.io/badge/SRB-studio-0a0a0a)
 
 ## One-click deploy to Netlify
 

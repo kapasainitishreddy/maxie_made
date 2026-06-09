@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8ff5b"/>
+      <stop offset="100%" stop-color="#b8ff5b"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="44" fill="#0a0a0a"/>
+  <!-- Stacked horizontal lines representing S, R, B initials -->
+  <g transform="translate(50, 56)">
+    <!-- S - top curve -->
+    <path d="M 0 14 Q 0 0 14 0 L 86 0 Q 100 0 100 14 L 100 28 Q 100 42 86 42 L 14 42 Q 0 42 0 56 L 0 70 Q 0 84 14 84 L 86 84 Q 100 84 100 70"
+      fill="none" stroke="url(#g)" stroke-width="14" stroke-linecap="round"/>
+  </g>
+</svg>

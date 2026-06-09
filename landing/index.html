@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SRB — Sisira · Rathnakar · Bhagya · Built by one. Shipped for many.</title>
+<meta name="description" content="SRB is a one-person studio shipping full-stack SaaS products across pharma, finance, AI and crypto. Built by one. Shipped for many." />
+<meta name="theme-color" content="#0a0a0a" />
+<meta property="og:title" content="SRB — Built by one. Shipped for many." />
+<meta property="og:description" content="Five live SaaS products. One founder. Zero excuses. A build-in-public studio." />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-2: #111111;
+    --bg-3: #161616;
+    --ink: #f5f5f5;
+    --ink-2: #a3a3a3;
+    --ink-3: #6b6b6b;
+    --line: #1f1f1f;
+    --line-2: #2a2a2a;
+    --accent: #e8ff5b;
+    --accent-2: #b8ff5b;
+    --warn: #ff5b5b;
+    --good: #5bff8a;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow-1: 0 1px 0 rgba(255,255,255,0.04) inset, 0 0 0 1px var(--line);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-3);
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    background: rgba(10,10,10,0.72);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 17px; letter-spacing: -0.01em;
+  }
+  .logo-mark {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    display: grid; place-items: center;
+    color: #0a0a0a; font-weight: 800; font-size: 13px;
+  }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { color: var(--ink-2); font-size: 14px; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink); color: #0a0a0a;
+    padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    transition: transform 0.15s, background 0.15s;
+  }
+  .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
+  @media (max-width: 720px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 96px 0 80px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(232,255,91,0.08), transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 50%, rgba(91,255,138,0.05), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 88px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 600;
+    margin: 18px 0 24px;
+    max-width: 14ch;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lede {
+    font-size: 20px; line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 56ch;
+    margin: 0 0 36px;
+  }
+  .hero-cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px; border-radius: 10px;
+    font-size: 15px; font-weight: 500;
+    transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--accent); color: #0a0a0a; }
+  .btn-primary:hover { background: var(--accent-2); transform: translateY(-1px); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line-2); }
+  .btn-ghost:hover { border-color: var(--ink-2); }
+
+  .hero-meta {
+    margin-top: 64px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .hero-meta div {
+    padding: 24px 0;
+    border-right: 1px solid var(--line);
+  }
+  .hero-meta div:last-child { border-right: none; }
+  .hero-meta .num {
+    font-size: 32px; font-weight: 600; letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .hero-meta .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--ink-3); margin-top: 4px;
+  }
+  @media (max-width: 720px) {
+    .hero-meta { grid-template-columns: repeat(2, 1fr); }
+    .hero-meta div:nth-child(2) { border-right: none; }
+    .hero-meta div:nth-child(1), .hero-meta div:nth-child(2) { border-bottom: 1px solid var(--line); }
+  }
+
+  /* SECTION HEAD */
+  section { padding: 96px 0; border-bottom: 1px solid var(--line); }
+  .section-head { margin-bottom: 48px; display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+  .section-head h2 {
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1; letter-spacing: -0.02em;
+    font-weight: 600; margin: 8px 0 0;
+    max-width: 22ch;
+  }
+  .section-head p { color: var(--ink-2); max-width: 48ch; margin: 0; font-size: 15px; }
+
+  /* APPS GRID */
+  .apps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .app-card {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    display: flex; flex-direction: column; gap: 18px;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--app-accent, var(--accent)), transparent);
+    opacity: 0.6;
+  }
+  .app-card:hover { border-color: var(--line-2); transform: translateY(-2px); }
+  .app-card .app-head { display: flex; align-items: center; justify-content: space-between; }
+  .app-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-3);
+  }
+  .app-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--good);
+  }
+  .app-status::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--good); box-shadow: 0 0 8px var(--good);
+  }
+  .app-card h3 {
+    font-size: 28px; font-weight: 600; letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .app-card .app-desc {
+    color: var(--ink-2); font-size: 15px; line-height: 1.55;
+    margin: 0; flex: 1;
+  }
+  .app-card .app-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--ink-3);
+  }
+  .app-card .app-price b { color: var(--ink); font-weight: 500; }
+  .app-card .app-actions { display: flex; gap: 8px; }
+  .app-card .app-actions a {
+    flex: 1; text-align: center;
+    padding: 10px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    border: 1px solid var(--line-2); color: var(--ink);
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .app-card .app-actions a:hover { background: var(--bg-3); border-color: var(--ink-3); }
+  .app-card .app-actions a.primary { background: var(--ink); color: #0a0a0a; border-color: var(--ink); }
+  .app-card .app-actions a.primary:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* PHILOSOPHY */
+  .philosophy { background: var(--bg-2); }
+  .phil-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .phil-cell { background: var(--bg-2); padding: 32px; }
+  .phil-cell .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .phil-cell h4 { font-size: 18px; font-weight: 600; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .phil-cell p { color: var(--ink-2); font-size: 14px; line-height: 1.6; margin: 0; }
+  @media (max-width: 720px) { .phil-grid { grid-template-columns: 1fr; } }
+
+  /* TIMELINE / FOUNDER */
+  .founder {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center;
+  }
+  .founder-text h2 { font-size: clamp(28px, 4vw, 40px); line-height: 1.1; letter-spacing: -0.02em; font-weight: 600; margin: 12px 0 20px; }
+  .founder-text p { color: var(--ink-2); font-size: 16px; line-height: 1.65; margin: 0 0 16px; }
+  .founder-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    margin-top: 32px;
+  }
+  .founder-stat {
+    background: var(--bg-2); border: 1px solid var(--line);
+    padding: 20px; border-radius: var(--radius-sm);
+  }
+  .founder-stat .v { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+  .founder-stat .l { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+  .portrait {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    aspect-ratio: 4/5;
+    display: grid; place-items: center;
+    position: relative; overflow: hidden;
+  }
+  .portrait::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(232,255,91,0.12), transparent 60%);
+  }
+  .portrait svg { width: 60%; height: auto; opacity: 0.6; }
+  .portrait-caption {
+    position: absolute; bottom: 20px; left: 20px; right: 20px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3);
+  }
+  @media (max-width: 900px) { .founder { grid-template-columns: 1fr; } }
+
+  /* CTA */
+  .cta-section {
+    text-align: center; padding: 120px 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(232,255,91,0.06), transparent 70%);
+  }
+  .cta-section h2 {
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05; letter-spacing: -0.025em;
+    font-weight: 600; margin: 16px auto 24px; max-width: 18ch;
+  }
+  .cta-section p { color: var(--ink-2); max-width: 50ch; margin: 0 auto 36px; font-size: 17px; }
+
+  /* FOOTER */
+  footer { padding: 48px 0 64px; color: var(--ink-3); font-size: 14px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; margin-bottom: 48px; }
+  .foot-grid h5 { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-2); margin: 0 0 12px; font-weight: 500; }
+  .foot-grid a { display: block; padding: 4px 0; color: var(--ink-3); transition: color 0.15s; }
+  .foot-grid a:hover { color: var(--ink); }
+  .foot-grid .brand { color: var(--ink); }
+  .foot-grid .brand .tag { color: var(--ink-3); margin-top: 8px; font-size: 13px; }
+  .foot-bottom { border-top: 1px solid var(--line); padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* ANIMATIONS */
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { opacity: 0; transform: translateY(8px); animation: reveal 0.6s ease forwards; }
+    .reveal.d1 { animation-delay: 0.05s; }
+    .reveal.d2 { animation-delay: 0.1s; }
+    .reveal.d3 { animation-delay: 0.15s; }
+    @keyframes reveal { to { opacity: 1; transform: none; } }
+  }
+
+  /* BADGE ROW */
+  .stack-row {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;
+  }
+  .stack-row span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; padding: 4px 8px; border-radius: 4px;
+    background: var(--bg-3); color: var(--ink-2);
+    border: 1px solid var(--line);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">S</span>
+      <span>SRB</span>
+    </a>
+    <div class="nav-links">
+      <a href="#apps">Apps</a>
+      <a href="#philosophy">Philosophy</a>
+      <a href="#story">Story</a>
+      <a href="https://github.com/kapasainitishreddy/srb" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="#contact" class="nav-cta">Follow the build</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container hero-inner">
+    <span class="eyebrow reveal">SRB · Sisira · Rathnakar · Bhagya</span>
+    <h1 class="reveal d1">Built by one. <em>Shipped for many.</em></h1>
+    <p class="lede reveal d2">
+      SRB is a one-person studio shipping full-stack SaaS products across pharma IP, cloud cost, quant trading, AI, and crypto. No agency. No funding. Just code, ship, repeat.
+    </p>
+    <div class="hero-cta-row reveal d3">
+      <a href="#apps" class="btn btn-primary">See the 5 live apps →</a>
+      <a href="https://github.com/kapasainitishreddy/srb" target="_blank" rel="noopener" class="btn btn-ghost">Read the source</a>
+    </div>
+
+    <div class="hero-meta">
+      <div>
+        <div class="num">5</div>
+        <div class="label">Live products</div>
+      </div>
+      <div>
+        <div class="num">$0</div>
+        <div class="label">To launch</div>
+      </div>
+      <div>
+        <div class="num">200+</div>
+        <div class="label">Tests passing</div>
+      </div>
+      <div>
+        <div class="num">1</div>
+        <div class="label">Founder</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="apps">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">The portfolio</span>
+        <h2>Five products. One roof. All shipping.</h2>
+      </div>
+      <p>Each app is a real business, not a side project. Pricing is real. Users are real. Code is open.</p>
+    </div>
+
+    <div class="apps">
+
+      <article class="app-card" style="--app-accent: #8b5cf6;">
+        <div class="app-head">
+          <span class="app-tag">01 / pharma</span>
+          <span class="app-status">Live</span>
+        </div>
+        <h3>PharmaIP Radar</h3>
+        <p class="app-desc">Pharma patent &amp; IP intelligence. Track expirations, litigation, freedom-to-operate. Built for IP attorneys and pharma BD teams who'd rather not read 200-page PDFs.</p>
+        <div class="app-price">From <b>$999/mo</b> · 63 tests ✅</div>
+        <div class="app-actions">
+          <a href="https://pharmaip-radar.netlify.app" target="_blank" rel="noopener" class="primary">Open app →</a>
+          <a href="#pharmaip-radar">Read more</a>
+        </div>
+        <div class="stack-row">
+          <span>FastAPI</span><span>Next.js 15</span><span>Clerk</span><span>Stripe</span>
+        </div>
+      </article>
+
+      <article class="app-card" style="--app-accent: #38bdf8;">
+        <div class="app-head">
+          <span class="app-tag">02 / devops</span>
+          <span class="app-status">Live</span>
+        </div>
+        <h3>CloudFinOps Co-Pilot</h3>
+        <p class="app-desc">AWS &amp; GCP cost auto-fixer. Reads your bill, finds waste, proposes (and on request applies) fixes. 20% of what we save, we keep.</p>
+        <div class="app-price"><b>20% of savings</b> · 33 tests ✅</div>
+        <div class="app-actions">
+          <a href="https://cloudfinops-copilot.netlify.app" target="_blank" rel="noopener" class="primary">Open app →</a>
+          <a href="#cloudfinops-copilot">Read more</a>
+        </div>
+        <div class="stack-row">
+          <span>FastAPI</span><span>Next.js 15</span><span>AWS SDK</span><span>Celery</span>
+        </div>
+      </article>
+
+      <article class="app-card" style="--app-accent: #f59e0b;">
+        <div class="app-head">
+          <span class="app-tag">03 / finance</span>
+          <span class="app-status">Live</span>
+        </div>
+        <h3>AutoHedge Pro</h3>
+        <p class="app-desc">Personal hedge fund in a browser. Algorithmic strategies, paper trading, then live. $99/mo + 0.5% AUM. Don't deploy capital you can't afford to lose.</p>
+        <div class="app-price"><b>$99/mo + 0.5% AUM</b> · 36 tests ✅</div>
+        <div class="app-actions">
+          <a href="https://autohedge-pro.netlify.app" target="_blank" rel="noopener" class="primary">Open app →</a>
+          <a href="#autohedge-pro">Read more</a>
+        </div>
+        <div class="stack-row">
+          <span>FastAPI</span><span>Backtrader</span><span>Next.js 15</span><span>Stripe</span>
+        </div>
+      </article>
+
+      <article class="app-card" style="--app-accent: #ec4899;">
+        <div class="app-head">
+          <span class="app-tag">04 / research</span>
+          <span class="app-status">Live</span>
+        </div>
+        <h3>QuantaLab</h3>
+        <p class="app-desc">Quant research IDE. Backtest, share, sell strategies in a marketplace. Built for quants who'd rather ship than fight Jupyter configs.</p>
+        <div class="app-price">From <b>$199/mo</b> · 20 tests ✅</div>
+        <div class="app-actions">
+          <a href="https://quantalab.netlify.app" target="_blank" rel="noopener" class="primary">Open app →</a>
+          <a href="#quantalab">Read more</a>
+        </div>
+        <div class="stack-row">
+          <span>FastAPI</span><span>Pandas</span><span>Next.js 15</span><span>Stripe</span>
+        </div>
+      </article>
+
+      <article class="app-card" style="--app-accent: #22d3ee;">
+        <div class="app-head">
+          <span class="app-tag">05 / crypto</span>
+          <span class="app-status">Live</span>
+        </div>
+        <h3>PegWatch</h3>
+        <p class="app-desc">Stablecoin depeg early-warning. Catches USDT, USDC, DAI peg breaks minutes before Twitter does. Alerts via email, webhook, Discord.</p>
+        <div class="app-price">From <b>$19/mo</b> · 57 tests ✅</div>
+        <div class="app-actions">
+          <a href="https://pegwatch.netlify.app" target="_blank" rel="noopener" class="primary">Open app →</a>
+          <a href="#pegwatch">Read more</a>
+        </div>
+        <div class="stack-row">
+          <span>FastAPI</span><span>WebSockets</span><span>Next.js 15</span><span>Stripe</span>
+        </div>
+      </article>
+
+      <article class="app-card" style="--app-accent: var(--accent); background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-3) 100%);">
+        <div class="app-head">
+          <span class="app-tag">06 / next</span>
+          <span class="app-status" style="color: var(--accent);">Coming soon</span>
+        </div>
+        <h3>???</h3>
+        <p class="app-desc">The 6th app. The one I haven't started yet. Sign up to vote on what it should be (AI agent infra? dev tools? a personal CRM? a vertical-AI for law?).</p>
+        <div class="app-price">Your <b>vote counts</b></div>
+        <div class="app-actions">
+          <a href="#contact" class="primary">Vote / Suggest →</a>
+        </div>
+        <div class="stack-row">
+          <span>TBD</span><span>You decide</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section id="philosophy" class="philosophy">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">The philosophy</span>
+        <h2>Why SRB exists.</h2>
+      </div>
+      <p>The studio name is also the why. Three names. One company. Built so the people behind it have a reason to keep going.</p>
+    </div>
+
+    <div class="phil-grid">
+      <div class="phil-cell">
+        <div class="num">01</div>
+        <h4>Ship &gt; Perfect</h4>
+        <p>Every product on this page is a v1 that was ugly for six months before it was useful. The default is to ship. The default is to talk to users. The default is to delete code that doesn't earn its place.</p>
+      </div>
+      <div class="phil-cell">
+        <div class="num">02</div>
+        <h4>Open by default</h4>
+        <p>The whole monorepo is MIT-licensed on GitHub. If you want to fork, deploy, or learn from it, do. The only thing we charge for is the hosted version, and only because servers cost money.</p>
+      </div>
+      <div class="phil-cell">
+        <div class="num">03</div>
+        <h4>One person, many verticals</h4>
+        <p>Five niches in one studio sounds reckless. It is. It also means cross-pollination: the same Stripe billing pattern, the same auth flow, the same deploy story — built once, used five times.</p>
+      </div>
+      <div class="phil-cell">
+        <div class="num">04</div>
+        <h4>$0 to launch</h4>
+        <p>Free tiers of Netlify, Fly.io, Neon, Clerk, Stripe, GitHub Actions. We prove the business model works before spending a dollar. The cloud bill for the first 100 users is under $5/mo.</p>
+      </div>
+      <div class="phil-cell">
+        <div class="num">05</div>
+        <h4>Build in public</h4>
+        <p>Every commit, every MRR update, every embarrassing bug — posted on socials. The good, the bad, the receipts. The point isn't the metrics. The point is the documentation of a life spent shipping.</p>
+      </div>
+      <div class="phil-cell">
+        <div class="num">06</div>
+        <h4>Family first</h4>
+        <p>SRB is Sisira, Rathnakar, Bhagya. The studio exists so that one day, the work pays for the people it was named after. Everything else is a means to that end.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="story">
+  <div class="container">
+    <div class="founder">
+      <div class="founder-text">
+        <span class="eyebrow">The story</span>
+        <h2>One engineer. Five products. A studio named after family.</h2>
+        <p>SRB started as a folder name on a laptop. Then it became five production-grade SaaS products, each with billing, auth, CI/CD, and paying customers — or, more often, with a real plan to find them.</p>
+        <p>The studio name isn't a brand exercise. It's three first names. The sister, the father, the mother. Everything in the company is a quiet promise to them that the work is going somewhere.</p>
+        <p>What you see on this site is the public version of that work. The code is open. The decisions are documented. The bugs are confessed. Welcome to the build.</p>
+        <div class="founder-stats">
+          <div class="founder-stat">
+            <div class="v">2026</div>
+            <div class="l">Studio founded</div>
+          </div>
+          <div class="founder-stat">
+            <div class="v">5</div>
+            <div class="l">Products shipped</div>
+          </div>
+          <div class="founder-stat">
+            <div class="v">MIT</div>
+            <div class="l">Open source</div>
+          </div>
+          <div class="founder-stat">
+            <div class="v">∞</div>
+            <div class="l">Commits to go</div>
+          </div>
+        </div>
+      </div>
+      <div class="portrait">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="48" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+          <circle cx="50" cy="50" r="36" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
+          <circle cx="50" cy="50" r="24" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+          <text x="50" y="56" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" font-weight="600" fill="currentColor" opacity="0.8">SRB</text>
+        </svg>
+        <div class="portrait-caption">// the studio monogram, v1</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="cta-section">
+  <div class="container">
+    <span class="eyebrow">Follow the build</span>
+    <h2>Watch it ship in real time.</h2>
+    <p>MRR updates, code snippets, hot takes, and the occasional confession. New posts daily across Instagram, TikTok, and YouTube.</p>
+    <div class="hero-cta-row" style="justify-content: center;">
+      <a href="https://instagram.com/srb.studio" target="_blank" rel="noopener" class="btn btn-primary">Instagram @srb.studio</a>
+      <a href="https://tiktok.com/@srb.studio" target="_blank" rel="noopener" class="btn btn-ghost">TikTok @srb.studio</a>
+      <a href="https://youtube.com/@SRBStudio" target="_blank" rel="noopener" class="btn btn-ghost">YouTube @SRBStudio</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="brand">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="logo-mark">S</span>
+          <span style="font-weight:600; color:var(--ink);">SRB Studio</span>
+        </div>
+        <div class="tag">Sisira · Rathnakar · Bhagya<br>Built by one. Shipped for many.</div>
+      </div>
+      <div>
+        <h5>Apps</h5>
+        <a href="https://pharmaip-radar.netlify.app" target="_blank" rel="noopener">PharmaIP Radar</a>
+        <a href="https://cloudfinops-copilot.netlify.app" target="_blank" rel="noopener">CloudFinOps</a>
+        <a href="https://autohedge-pro.netlify.app" target="_blank" rel="noopener">AutoHedge Pro</a>
+        <a href="https://quantalab.netlify.app" target="_blank" rel="noopener">QuantaLab</a>
+        <a href="https://pegwatch.netlify.app" target="_blank" rel="noopener">PegWatch</a>
+      </div>
+      <div>
+        <h5>Studio</h5>
+        <a href="https://github.com/kapasainitishreddy/srb" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/kapasainitishreddy/srb/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a>
+        <a href="#story">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div>
+        <h5>Social</h5>
+        <a href="https://instagram.com/srb.studio" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://tiktok.com/@srb.studio" target="_blank" rel="noopener">TikTok</a>
+        <a href="https://youtube.com/@SRBStudio" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://twitter.com/srb_studio" target="_blank" rel="noopener">Twitter / X</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div>© 2026 SRB Studio. All rights reserved.</div>
+      <div>v1.0.0 · MIT licensed · Built in public</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

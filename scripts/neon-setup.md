@@ -12,7 +12,7 @@ Neon is the Postgres provider for all 4 apps. Free tier gives you 0.5GB storage 
 ### 2. Create a project
 1. Click "Create Project"
 2. Settings:
-   - **Name**: `maxie-made-prod` (or whatever you like)
+   - **Name**: `srb-prod` (or whatever you like)
    - **Region**: `US East (Ohio)` — same as Fly.io's `iad`
    - **Postgres version**: 16 (latest)
 3. Click "Create Project"

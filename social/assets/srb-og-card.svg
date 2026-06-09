@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#161616"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8ff5b"/>
+      <stop offset="100%" stop-color="#b8ff5b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#e8ff5b" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#e8ff5b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <line x1="0" y1="400" x2="1200" y2="400" stroke="#1f1f1f" stroke-width="1"/>
+
+  <!-- Eyebrow -->
+  <text x="100" y="120" font-family="JetBrains Mono, monospace" font-size="18" letter-spacing="4" fill="#6b6b6b">SRB · SISIRA · RATHNAKAR · BHAGYA</text>
+
+  <!-- Main title -->
+  <text x="100" y="240" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="96" fill="#f5f5f5" letter-spacing="-3">Built by one.</text>
+  <text x="100" y="340" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="96" fill="url(#g)" letter-spacing="-3">Shipped for many.</text>
+
+  <!-- Subtitle -->
+  <text x="100" y="460" font-family="Inter, system-ui, sans-serif" font-size="24" fill="#a3a3a3">Five production SaaS products. One founder. $0 to launch.</text>
+
+  <!-- URL pill -->
+  <rect x="100" y="510" width="200" height="44" rx="22" fill="#f5f5f5"/>
+  <text x="200" y="538" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="18" fill="#0a0a0a">srb.studio</text>
+
+  <!-- Logo mark, top right -->
+  <rect x="1040" y="80" width="60" height="60" rx="14" fill="#0a0a0a" stroke="#1f1f1f" stroke-width="1"/>
+  <text x="1070" y="120" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-weight="800" font-size="32" fill="#e8ff5b">S</text>
+</svg>

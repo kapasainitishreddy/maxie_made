@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SRB Post Visual Generator</title>
+<style>
+  :root {
+    --bg: #0a0a0a; --bg-2: #161616; --line: #1f1f1f; --line-2: #2a2a2a;
+    --ink: #f5f5f5; --ink-2: #a3a3a3; --ink-3: #6b6b6b;
+    --accent: #e8ff5b; --accent-2: #b8ff5b;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .app { display: grid; grid-template-columns: 360px 1fr; min-height: 100vh; }
+  .panel { background: var(--bg-2); border-right: 1px solid var(--line); padding: 24px; overflow-y: auto; }
+  .panel h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .panel .sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 24px; }
+  .group { margin-bottom: 24px; }
+  .group h3 { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-3); margin: 0 0 12px; font-weight: 500; }
+  .templates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tpl { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; cursor: pointer; font-size: 12px; color: var(--ink-2); text-align: center; transition: all 0.15s; }
+  .tpl:hover { color: var(--ink); border-color: var(--ink-3); }
+  .tpl.active { background: var(--accent); color: #0a0a0a; border-color: var(--accent); }
+  .tpl-icon { width: 100%; aspect-ratio: 1; background: var(--bg-2); border-radius: 4px; margin-bottom: 6px; display: grid; place-items: center; font-size: 22px; }
+  .tpl.active .tpl-icon { background: #0a0a0a; }
+  label { display: block; font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
+  input[type="text"], textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 10px; color: var(--ink); font-family: inherit; font-size: 13px;
+    transition: border-color 0.15s;
+  }
+  input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 60px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .swatch { display: flex; gap: 4px; flex-wrap: wrap; }
+  .swatch button { width: 28px; height: 28px; border-radius: 6px; border: 2px solid transparent; cursor: pointer; }
+  .swatch button.active { border-color: var(--ink); }
+  .actions { display: flex; flex-direction: column; gap: 8px; margin-top: 24px; }
+  .btn { padding: 10px 14px; border-radius: 6px; border: 1px solid var(--line-2); background: var(--bg); color: var(--ink); font-size: 13px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .btn:hover { background: var(--bg-2); border-color: var(--ink-3); }
+  .btn.primary { background: var(--accent); color: #0a0a0a; border-color: var(--accent); font-weight: 500; }
+  .btn.primary:hover { background: var(--accent-2); }
+  .stage { padding: 40px; display: grid; place-items: center; background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(232,255,91,0.03), transparent 60%),
+    repeating-linear-gradient(45deg, transparent 0 20px, rgba(255,255,255,0.01) 20px 21px);
+  }
+  .stage-info { position: fixed; top: 16px; right: 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-3); }
+  .canvas-wrap { box-shadow: 0 20px 60px rgba(0,0,0,0.5); border-radius: 12px; overflow: hidden; }
+  /* Shared canvas */
+  .canvas {
+    width: 1080px; height: 1080px; background: #0a0a0a; position: relative; overflow: hidden;
+    transform-origin: top left;
+  }
+  .canvas.square { width: 1080px; height: 1080px; }
+  .canvas.vertical { width: 1080px; height: 1920px; }
+  .canvas.landscape { width: 1200px; height: 630px; }
+  /* TPL: BRAND */
+  .tpl-brand { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 100px; }
+  .tpl-brand .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: 6px; color: var(--ink-3); margin-bottom: 30px; }
+  .tpl-brand h2 { font-size: 130px; font-weight: 600; line-height: 1.0; margin: 0 0 18px; letter-spacing: -5px; color: #fff; }
+  .tpl-brand h2 em { font-style: normal; color: var(--accent); }
+  .tpl-brand p { font-size: 32px; color: var(--ink-2); line-height: 1.4; max-width: 800px; }
+  .tpl-brand .url { position: absolute; bottom: 80px; right: 100px; font-family: 'JetBrains Mono', monospace; font-size: 22px; color: var(--ink-3); }
+  /* TPL: STAT */
+  .tpl-stat { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 100px; text-align: center; }
+  .tpl-stat .label { font-family: 'JetBrains Mono', monospace; font-size: 28px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 40px; }
+  .tpl-stat .num { font-size: 280px; font-weight: 600; line-height: 0.9; color: #fff; letter-spacing: -10px; }
+  .canvas.landscape .tpl-stat .num { font-size: 160px; letter-spacing: -5px; }
+  .canvas.vertical .tpl-stat .num { font-size: 320px; }
+  .canvas.landscape .tpl-stat .label { font-size: 22px; margin-bottom: 24px; }
+  .canvas.landscape .tpl-stat .desc { font-size: 28px; margin-top: 28px; }
+  .tpl-stat .num em { font-style: normal; color: var(--accent); }
+  .tpl-stat .desc { font-size: 36px; color: var(--ink-2); line-height: 1.3; margin-top: 40px; max-width: 800px; }
+  /* TPL: LIST */
+  .tpl-list { padding: 80px; }
+  .tpl-list .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: 4px; color: var(--ink-3); margin-bottom: 40px; }
+  .tpl-list h2 { font-size: 80px; font-weight: 600; line-height: 1.0; margin: 0 0 60px; color: #fff; letter-spacing: -3px; max-width: 900px; }
+  .tpl-list ol { list-style: none; padding: 0; margin: 0; }
+  .tpl-list li { display: flex; gap: 40px; padding: 30px 0; border-top: 1px solid #1f1f1f; font-size: 36px; line-height: 1.3; }
+  .tpl-list li:last-child { border-bottom: 1px solid #1f1f1f; }
+  .tpl-list li .n { font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 32px; min-width: 50px; }
+  .tpl-list li .t { color: #fff; }
+  /* TPL: QUOTE */
+  .tpl-quote { display: flex; flex-direction: column; justify-content: center; padding: 100px; position: relative; }
+  .tpl-quote::before { content: '"'; position: absolute; top: 100px; left: 80px; font-size: 400px; color: var(--accent); opacity: 0.15; line-height: 0.6; font-family: serif; }
+  .tpl-quote blockquote { font-size: 70px; line-height: 1.15; font-weight: 500; color: #fff; margin: 0; letter-spacing: -2px; position: relative; z-index: 1; }
+  .tpl-quote .by { font-family: 'JetBrains Mono', monospace; font-size: 22px; color: var(--ink-3); margin-top: 60px; text-transform: uppercase; letter-spacing: 3px; }
+  /* TPL: CAROUSEL COVER */
+  .tpl-carousel { display: flex; flex-direction: column; justify-content: space-between; padding: 80px; }
+  .tpl-carousel .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .tpl-carousel .tag { font-family: 'JetBrains Mono', monospace; font-size: 24px; color: var(--ink-3); letter-spacing: 3px; }
+  .tpl-carousel .num { font-family: 'JetBrains Mono', monospace; font-size: 24px; color: var(--accent); }
+  .tpl-carousel .middle h2 { font-size: 130px; font-weight: 600; line-height: 0.95; margin: 0; letter-spacing: -5px; color: #fff; }
+  .tpl-carousel .middle h2 em { font-style: normal; color: var(--accent); }
+  .tpl-carousel .middle p { font-size: 32px; color: var(--ink-2); margin-top: 40px; line-height: 1.4; max-width: 800px; }
+  .tpl-carousel .bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+  .tpl-carousel .swipe { font-family: 'JetBrains Mono', monospace; font-size: 20px; color: var(--ink-3); }
+  /* TPL: HOOK */
+  .tpl-hook { display: flex; flex-direction: column; justify-content: flex-end; padding: 80px; min-height: 100%; }
+  .tpl-hook .badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 22px; color: #0a0a0a; background: var(--accent); padding: 8px 16px; border-radius: 6px; margin-bottom: 30px; align-self: flex-start; font-weight: 500; }
+  .tpl-hook h2 { font-size: 110px; font-weight: 600; line-height: 1.0; margin: 0 0 30px; color: #fff; letter-spacing: -4px; }
+  .tpl-hook p { font-size: 30px; color: var(--ink-2); line-height: 1.4; max-width: 850px; }
+  .tpl-hook .footer { position: absolute; bottom: 60px; left: 80px; right: 80px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 18px; color: var(--ink-3); }
+  /* TPL: APP TILE */
+  .tpl-tile { padding: 100px; display: flex; flex-direction: column; justify-content: space-between; }
+  .tpl-tile .tag-row { display: flex; justify-content: space-between; align-items: center; }
+  .tpl-tile .tag { font-family: 'JetBrains Mono', monospace; font-size: 22px; color: var(--ink-3); letter-spacing: 3px; }
+  .tpl-tile .status { display: inline-flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #5bff8a; }
+  .tpl-tile .status::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: #5bff8a; box-shadow: 0 0 16px #5bff8a; }
+  .tpl-tile h3 { font-size: 140px; font-weight: 600; margin: 0; letter-spacing: -5px; color: #fff; }
+  .tpl-tile p { font-size: 32px; color: var(--ink-2); line-height: 1.4; max-width: 850px; }
+  .tpl-tile .price { font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--ink-3); }
+  .tpl-tile .price b { color: #fff; font-weight: 500; }
+  .tpl-tile .stack { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+  .tpl-tile .stack span { font-family: 'JetBrains Mono', monospace; font-size: 18px; padding: 6px 12px; border-radius: 4px; background: rgba(255,255,255,0.06); color: var(--ink-2); }
+  /* DPR-aware scaling */
+  @media (max-width: 1500px) {
+    .canvas { transform: scale(0.6); }
+  }
+  @media (max-width: 1200px) {
+    .canvas { transform: scale(0.5); }
+  }
+  .stage .canvas { transition: transform 0.2s; }
+  /* TPL footer watermark */
+  .watermark { position: absolute; bottom: 30px; right: 40px; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--ink-3); letter-spacing: 2px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <h1>SRB Post Generator</h1>
+    <div class="sub">Build → screenshot → post</div>
+
+    <div class="group">
+      <h3>Template</h3>
+      <div class="templates" id="tpls">
+        <div class="tpl active" data-tpl="brand"><div class="tpl-icon">B</div>Brand</div>
+        <div class="tpl" data-tpl="stat"><div class="tpl-icon">#</div>Big Stat</div>
+        <div class="tpl" data-tpl="list"><div class="tpl-icon">≡</div>List</div>
+        <div class="tpl" data-tpl="quote"><div class="tpl-icon">"</div>Quote</div>
+        <div class="tpl" data-tpl="hook"><div class="tpl-icon">→</div>Hook</div>
+        <div class="tpl" data-tpl="tile"><div class="tpl-icon">▣</div>App Tile</div>
+        <div class="tpl" data-tpl="carousel"><div class="tpl-icon">◧</div>Carousel</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h3>Format</h3>
+      <div class="templates" id="fmts">
+        <div class="tpl active" data-fmt="square">1:1</div>
+        <div class="tpl" data-fmt="vertical">9:16</div>
+        <div class="tpl" data-fmt="landscape">16:9</div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h3>Accent</h3>
+      <div class="swatch" id="swatch">
+        <button class="active" data-color="#e8ff5b" style="background:#e8ff5b"></button>
+        <button data-color="#8b5cf6" style="background:#8b5cf6"></button>
+        <button data-color="#38bdf8" style="background:#38bdf8"></button>
+        <button data-color="#f59e0b" style="background:#f59e0b"></button>
+        <button data-color="#ec4899" style="background:#ec4899"></button>
+        <button data-color="#22d3ee" style="background:#22d3ee"></button>
+        <button data-color="#ff5b5b" style="background:#ff5b5b"></button>
+        <button data-color="#5bff8a" style="background:#5bff8a"></button>
+      </div>
+    </div>
+
+    <div class="group">
+      <h3>Text</h3>
+      <label>Eyebrow (top label)</label>
+      <input type="text" id="eyebrow" value="SRB · SISIRA · RATHNAKAR · BHAGYA">
+      <div style="height:12px"></div>
+      <label>Title (line 1)</label>
+      <input type="text" id="title1" value="Built by one.">
+      <div style="height:8px"></div>
+      <label>Title (line 2, colored)</label>
+      <input type="text" id="title2" value="Shipped for many.">
+      <div style="height:12px"></div>
+      <label>Body / description</label>
+      <textarea id="body">Five production SaaS products. One founder. $0 to launch.</textarea>
+      <div style="height:8px"></div>
+      <label>Footer / URL</label>
+      <input type="text" id="footer" value="srb.studio">
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" id="export">📋 Copy as image (right-click → save)</button>
+      <button class="btn" id="download">⬇ Download HTML</button>
+    </div>
+    <div style="font-size: 11px; color: var(--ink-3); margin-top: 16px; line-height: 1.5;">
+      To save as PNG: right-click the canvas → "Save image as" (Chrome/Edge). Or use a snipping tool. The canvas is exactly 1080×1080, 1080×1920, or 1200×630.
+    </div>
+  </aside>
+
+  <main class="stage" id="stage">
+    <div class="stage-info" id="dim">1080 × 1080</div>
+    <div class="canvas-wrap">
+      <div class="canvas square" id="canvas">
+        <div class="tpl-brand" id="tplContent"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  let state = {
+    tpl: 'brand',
+    fmt: 'square',
+    color: '#e8ff5b',
+    eyebrow: 'SRB · SISIRA · RATHNAKAR · BHAGYA',
+    title1: 'Built by one.',
+    title2: 'Shipped for many.',
+    body: 'Five production SaaS products. One founder. $0 to launch.',
+    footer: 'srb.studio'
+  };
+
+  const tplRenderers = {
+    brand: (s) => `
+      <div class="tpl-brand">
+        <div class="eyebrow">${s.eyebrow}</div>
+        <h2>${s.title1}<br><em>${s.title2}</em></h2>
+        <p>${s.body}</p>
+        <div class="url">${s.footer}</div>
+      </div>`,
+    stat: (s) => `
+      <div class="tpl-stat">
+        <div class="label">${s.eyebrow}</div>
+        <div class="num">${s.title1}<br><em>${s.title2}</em></div>
+        <div class="desc">${s.body}</div>
+      </div>
+      <div class="watermark">${s.footer}</div>`,
+    list: (s) => {
+      const items = s.body.split('\n').filter(Boolean).slice(0, 5);
+      return `
+      <div class="tpl-list">
+        <div class="eyebrow">${s.eyebrow}</div>
+        <h2>${s.title1} <em style="color: var(--accent); font-style: normal;">${s.title2}</em></h2>
+        <ol>
+          ${items.map((t, i) => `<li><span class="n">0${i+1}</span><span class="t">${t}</span></li>`).join('')}
+        </ol>
+        <div class="watermark">${s.footer}</div>
+      </div>`;
+    },
+    quote: (s) => `
+      <div class="tpl-quote">
+        <blockquote>${s.title1} <em style="color: var(--accent); font-style: normal;">${s.title2}</em></blockquote>
+        <div class="by">${s.eyebrow} · ${s.footer}</div>
+      </div>`,
+    hook: (s) => `
+      <div class="tpl-hook">
+        <span class="badge">${s.eyebrow}</span>
+        <h2>${s.title1}<br><em style="color: var(--accent); font-style: normal;">${s.title2}</em></h2>
+        <p>${s.body}</p>
+        <div class="footer"><span>${s.footer}</span><span>SRB Studio</span></div>
+      </div>`,
+    tile: (s) => `
+      <div class="tpl-tile">
+        <div class="tag-row">
+          <span class="tag">${s.eyebrow}</span>
+          <span class="status">Live</span>
+        </div>
+        <h3>${s.title1}</h3>
+        <p>${s.body}</p>
+        <div class="stack">${s.title2.split(',').map(t => `<span>${t.trim()}</span>`).join('')}</div>
+        <div class="price">From <b>${s.footer}</b></div>
+      </div>`,
+    carousel: (s) => `
+      <div class="tpl-carousel">
+        <div class="top">
+          <span class="tag">${s.eyebrow}</span>
+          <span class="num">01 / 05</span>
+        </div>
+        <div class="middle">
+          <h2>${s.title1}<br><em>${s.title2}</em></h2>
+          <p>${s.body}</p>
+        </div>
+        <div class="bottom">
+          <span class="swipe">Swipe →</span>
+          <span class="tag">${s.footer}</span>
+        </div>
+      </div>`
+  };
+
+  function render() {
+    const c = document.getElementById('canvas');
+    c.className = `canvas ${state.fmt}`;
+    c.style.background = '#0a0a0a';
+    c.style.setProperty('--accent', state.color);
+    c.style.setProperty('--accent-2', state.color);
+    c.innerHTML = tplRenderers[state.tpl](state);
+    const dim = state.fmt === 'vertical' ? '1080 × 1920' : state.fmt === 'landscape' ? '1200 × 630' : '1080 × 1080';
+    document.getElementById('dim').textContent = dim;
+  }
+
+  document.querySelectorAll('#tpls .tpl').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#tpls .tpl').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.tpl = b.dataset.tpl;
+    render();
+  }));
+  document.querySelectorAll('#fmts .tpl').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#fmts .tpl').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.fmt = b.dataset.fmt;
+    render();
+  }));
+  document.querySelectorAll('#swatch button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('#swatch button').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    state.color = b.dataset.color;
+    render();
+  }));
+  ['eyebrow', 'title1', 'title2', 'body', 'footer'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+      state[id] = e.target.value;
+      render();
+    });
+  });
+
+  document.getElementById('download').addEventListener('click', () => {
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${state.title1}</title></head><body style="margin:0">${document.getElementById('canvas').outerHTML}</body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `srb-post-${state.tpl}-${Date.now()}.html`;
+    a.click();
+  });
+
+  render();
+</script>
+</body>
+</html>
